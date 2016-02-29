@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_padding">16dp</dimen>
+
+    <!-- Target Activity View !-->
+    <dimen name="target_activity_view_icon_size">24dp</dimen>
+    <dimen name="target_activity_icon_margin_left">10dp</dimen>
+    <dimen name="target_activity_view_label_margin_left">54dp</dimen>
+    <dimen name="target_activity_header_view_font_size">19sp</dimen>
+
+</resources>
