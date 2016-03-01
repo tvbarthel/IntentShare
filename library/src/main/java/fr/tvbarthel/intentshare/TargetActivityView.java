@@ -98,7 +98,7 @@ class TargetActivityView extends FrameLayout {
         setBackgroundColor(
                 ContextCompat.getColor(
                         context,
-                        R.color.traget_activity_view_background
+                        R.color.target_activity_view_background
                 )
         );
 

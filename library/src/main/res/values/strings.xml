@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">IntentShare</string>
+    <string name="default_sharing_label">Share with</string>
 </resources>

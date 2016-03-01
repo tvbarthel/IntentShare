@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="IntentShareTheme" parent="ActivityThemeBase">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="ActivityThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/activity_translucent_background</item>
+    </style>
+</resources>

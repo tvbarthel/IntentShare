@@ -156,7 +156,8 @@ public final class IntentShare {
      * Target activity field will be then filled according to the params.
      */
     public void deliver() {
-        // TODO check params and start the target chooser activity.
+        // TODO check params.
+        TargetChooserActivity.start(context, this);
     }
 
 }
