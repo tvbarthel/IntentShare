@@ -135,6 +135,8 @@ public class TargetChooserActivity extends AppCompatActivity implements TargetAc
         );
         Intent i = new Intent(Intent.ACTION_SEND);
 
+        // TODO check the target activity and apply the rigth params.
+
         if (mailTargetActivities.contains(packageName + activityName)) {
             i.putExtra(Intent.EXTRA_TEXT, "mail");
         } else {
