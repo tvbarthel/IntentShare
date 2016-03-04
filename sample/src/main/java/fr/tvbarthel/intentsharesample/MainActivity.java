@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
                                 .text("Default text you would like to share.")
                                 .mailBody("Extended text you would like to share in mail body.")
                                 .mailSubject("Mail subject.")
-                                .image(Uri.parse("file://coucou"))
+                                .image(Uri.parse("content://com.example.test.fileprovider/data/img.png"))
                                 .facebookBody(Uri.parse("http://only-link.com"))
                                 .twitterBody("Tweet can only have 127 char!")
                                 .deliver();
