@@ -2,12 +2,37 @@ package fr.tvbarthel.intentshare;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * {@link IntentShare} is designed to enhance the sharing experience by allowing to share
  * different content according to the application the user will choose to share with.
  */
-public final class IntentShare {
+public final class IntentShare implements Parcelable {
+
+    /**
+     * Parcelable.
+     */
+    public static final Parcelable.Creator<IntentShare> CREATOR = new Parcelable.Creator<IntentShare>() {
+        public IntentShare createFromParcel(Parcel source) {
+            return new IntentShare(source);
+        }
+
+        public IntentShare[] newArray(int size) {
+            return new IntentShare[size];
+        }
+    };
+
+    /**
+     * Facebook package.
+     */
+    public static final String FACEBOOK = "com.facebook.katana";
+
+    /**
+     * Twitter package.
+     */
+    public static final String TWITTER = "com.twitter.android";
 
     /**
      * Text which will be shared by default.
@@ -58,13 +83,42 @@ public final class IntentShare {
      * {@link IntentShare} is designed to enhance the sharing experience by allowing to share
      * different content according to the application the user will choose to share with.
      *
+     * @param in parcel.
+     */
+    protected IntentShare(Parcel in) {
+        this.text = in.readString();
+        this.imageUri = in.readParcelable(Uri.class.getClassLoader());
+        this.mailBody = in.readString();
+        this.mailSubject = in.readString();
+        this.facebookLink = in.readParcelable(Uri.class.getClassLoader());
+        this.tweet = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.text);
+        dest.writeParcelable(this.imageUri, 0);
+        dest.writeString(this.mailBody);
+        dest.writeString(this.mailSubject);
+        dest.writeParcelable(this.facebookLink, 0);
+        dest.writeString(this.tweet);
+    }
+
+    /**
+     * {@link IntentShare} is designed to enhance the sharing experience by allowing to share
+     * different content according to the application the user will choose to share with.
+     *
      * @param context context from which the sharing is initiated.
      * @return new instance.
      */
     public static IntentShare with(Context context) {
         return new IntentShare(context);
     }
-
 
     /**
      * Text which will be shared.
@@ -159,5 +213,4 @@ public final class IntentShare {
         // TODO check params.
         TargetChooserActivity.start(context, this);
     }
-
 }

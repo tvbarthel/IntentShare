@@ -19,9 +19,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         IntentShare.with(MainActivity.this)
-                                .text("Coucou")
-                                .mailBody("Mail body")
-                                .mailSubject("Main subject")
+                                .text("Default text you would like to share.")
+                                .mailBody("Extended text you would like to share in mail body.")
+                                .mailSubject("Mail subject.")
                                 .image(Uri.parse("file://coucou"))
                                 .facebookBody(Uri.parse("http://only-link.com"))
                                 .twitterBody("Tweet can only have 127 char!")
