@@ -69,6 +69,7 @@ public final class IntentShare implements Parcelable {
      * Context used to start the activity used to choose a target one.
      */
     private Context context;
+    private IntentShareListener listener;
 
     /**
      * {@link IntentShare} is designed to enhance the sharing experience by allowing to share
@@ -78,6 +79,7 @@ public final class IntentShare implements Parcelable {
      */
     private IntentShare(Context context) {
         this.context = context;
+        this.listener = null;
     }
 
     /**
@@ -229,12 +231,28 @@ public final class IntentShare implements Parcelable {
     }
 
     /**
+     * Allow to set a listener to be notified on chosen target activity.
+     * <p/>
+     * Listener will be automatically unregister once a result is delivered.
+     *
+     * @param listener listener to register.
+     * @return current {@link IntentShare} for method chaining.
+     */
+    public IntentShare listener(@NonNull IntentShareListener listener) {
+        this.listener = listener;
+        return this;
+    }
+
+    /**
      * Deliver the intent to the system.
      * <p/>
      * This will lead to the display of every applications that can handle the build intent.
      * Target activity field will be then filled according to the params.
      */
     public void deliver() {
+        if (this.listener != null) {
+            this.listener.register(context);
+        }
         TargetChooserActivity.start(context, this);
     }
 }

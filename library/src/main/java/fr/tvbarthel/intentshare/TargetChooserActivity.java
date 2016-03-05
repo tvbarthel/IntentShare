@@ -49,6 +49,16 @@ public class TargetChooserActivity extends AppCompatActivity
     private int targetActivityViewHeight;
 
     /**
+     * Target activity selected by the user.
+     */
+    private TargetActivity selectedTargetActivity;
+
+    /**
+     * Used to know if listener has been notified.
+     */
+    private boolean listenerNotified;
+
+    /**
      * Simple activity used to allow the user to choose a target activity for the sharing intent.
      *
      * @param context     context used to start the activity.
@@ -85,11 +95,33 @@ public class TargetChooserActivity extends AppCompatActivity
         targetActivityManager = new TargetActivityManager();
         targetActivityManager.resolveTargetActivities(this);
         setUpRecyclerView();
+
+        selectedTargetActivity = null;
+        listenerNotified = false;
     }
 
     @Override
     public void onBackPressed() {
         finishAnimated();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!listenerNotified) {
+            IntentShareListener.notifySharingCanceled(this);
+        }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (selectedTargetActivity != null) {
+            IntentShareListener.notifySharingCompleted(this, selectedTargetActivity.getPackageName());
+        } else {
+            IntentShareListener.notifySharingCanceled(this);
+        }
+        listenerNotified = true;
     }
 
     @Override
@@ -99,6 +131,7 @@ public class TargetChooserActivity extends AppCompatActivity
 
     @Override
     public void onTargetActivitySelected(TargetActivity targetActivity) {
+        selectedTargetActivity = targetActivity;
         Intent intent = targetActivityManager.buildTargetActivityIntent(targetActivity, intentShare);
         startActivity(intent);
         finish();
