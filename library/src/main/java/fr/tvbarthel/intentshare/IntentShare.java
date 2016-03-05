@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * {@link IntentShare} is designed to enhance the sharing experience by allowing to share
@@ -116,7 +117,8 @@ public final class IntentShare implements Parcelable {
      * @param context context from which the sharing is initiated.
      * @return new instance.
      */
-    public static IntentShare with(Context context) {
+    @NonNull
+    public static IntentShare with(@NonNull Context context) {
         return new IntentShare(context);
     }
 
@@ -128,7 +130,8 @@ public final class IntentShare implements Parcelable {
      * @param text text to share.
      * @return current {@link IntentShare} for method chaining.
      */
-    public IntentShare text(String text) {
+    @NonNull
+    public IntentShare text(@NonNull String text) {
         this.text = text;
         return this;
     }
@@ -140,9 +143,18 @@ public final class IntentShare implements Parcelable {
      * @param imageUri Uri of the image.
      * @return current {@link IntentShare} for method chaining.
      */
-    public IntentShare image(Uri imageUri) {
-        // TODO check if image uri back a image file.
-        this.imageUri = imageUri;
+    @NonNull
+    public IntentShare image(@NonNull Uri imageUri) {
+        String lastPathSegment = imageUri.getLastPathSegment();
+        if (!lastPathSegment.endsWith(".png") && !lastPathSegment.endsWith(".jpg")) {
+            throw new IllegalArgumentException("Invalid image uri : only .png and .jpg file supported : "
+                    + imageUri);
+        } else if (!"content".equals(imageUri.getScheme())) {
+            throw new IllegalArgumentException("Invalid image uri : only content scheme supported : "
+                    + imageUri);
+        } else {
+            this.imageUri = imageUri;
+        }
         return this;
     }
 
@@ -155,7 +167,8 @@ public final class IntentShare implements Parcelable {
      * @param mailBody text set as text body for mail application.
      * @return current {@link IntentShare} for method chaining.
      */
-    public IntentShare mailBody(String mailBody) {
+    @NonNull
+    public IntentShare mailBody(@NonNull String mailBody) {
         this.mailBody = mailBody;
         return this;
     }
@@ -169,7 +182,8 @@ public final class IntentShare implements Parcelable {
      * @param mailSubject subject of the mail.
      * @return current {@link IntentShare} for method chaining.
      */
-    public IntentShare mailSubject(String mailSubject) {
+    @NonNull
+    public IntentShare mailSubject(@NonNull String mailSubject) {
         this.mailSubject = mailSubject;
         return this;
     }
@@ -183,9 +197,15 @@ public final class IntentShare implements Parcelable {
      * @param link link to the content.
      * @return current {@link IntentShare} for method chaining.
      */
-    public IntentShare facebookBody(Uri link) {
-        // TODO check link validity.
-        facebookLink = link;
+    @NonNull
+    public IntentShare facebookBody(@NonNull Uri link) {
+        String scheme = link.getScheme();
+        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+            throw new IllegalArgumentException("Invalid facebook link : un handled scheme : "
+                    + scheme);
+        } else {
+            facebookLink = link;
+        }
         return this;
     }
 
@@ -197,9 +217,14 @@ public final class IntentShare implements Parcelable {
      * @param tweet tweet body.
      * @return current {@link IntentShare} for method chaining.
      */
-    public IntentShare twitterBody(String tweet) {
-        // TODO check tweet validity.
-        this.tweet = tweet;
+    @NonNull
+    public IntentShare twitterBody(@NonNull String tweet) {
+        if (tweet.length() > 140) {
+            throw new IllegalArgumentException("Invalid tweet content : "
+                    + "exceed the 140-Character limit : " + tweet);
+        } else {
+            this.tweet = tweet;
+        }
         return this;
     }
 
@@ -210,7 +235,6 @@ public final class IntentShare implements Parcelable {
      * Target activity field will be then filled according to the params.
      */
     public void deliver() {
-        // TODO check params.
         TargetChooserActivity.start(context, this);
     }
 }
