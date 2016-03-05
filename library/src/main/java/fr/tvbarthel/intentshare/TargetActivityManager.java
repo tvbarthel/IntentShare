@@ -126,6 +126,7 @@ class TargetActivityManager {
         if (intentShare.imageUri != null) {
             intent.putExtra(Intent.EXTRA_STREAM, intentShare.imageUri);
             intent.setType("image/jpeg");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
     }
 }
