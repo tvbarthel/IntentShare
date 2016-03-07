@@ -30,14 +30,18 @@ class TargetActivity {
      */
     public TargetActivity(Context context, ResolveInfo resolveInfo, long lastSelection) {
         ActivityInfo activityInfo = resolveInfo.activityInfo;
+        this.lastSelection = lastSelection;
         this.packageName = activityInfo.packageName;
         this.activityName = activityInfo.name;
-        this.lastSelection = lastSelection;
+        int icon = resolveInfo.activityInfo.icon;
+        if (icon == 0) {
+            icon = resolveInfo.activityInfo.applicationInfo.icon;
+        }
         this.iconUri = Uri.parse(
                 "android.resource://"
                         + resolveInfo.activityInfo.applicationInfo.packageName
                         + File.separator
-                        + resolveInfo.activityInfo.applicationInfo.icon
+                        + icon
         );
         this.activityLabel = resolveInfo.loadLabel(context.getPackageManager());
         this.isMail = resolveInfo.filter.hasDataType("message/rfc822");
