@@ -7,5 +7,6 @@
     <dimen name="target_activity_icon_margin_left">10dp</dimen>
     <dimen name="target_activity_view_label_margin_left">54dp</dimen>
     <dimen name="target_activity_header_view_font_size">19sp</dimen>
+    <dimen name="target_activity_view_height">60dp</dimen>
 
 </resources>

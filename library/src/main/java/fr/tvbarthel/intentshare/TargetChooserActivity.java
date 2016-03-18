@@ -44,6 +44,11 @@ public class TargetChooserActivity extends AppCompatActivity
     private IntentShare intentShare;
 
     /**
+     * Height in of a {@link TargetActivityView}
+     */
+    private int targetActivityViewHeight;
+
+    /**
      * Simple activity used to allow the user to choose a target activity for the sharing intent.
      *
      * @param context     context used to start the activity.
@@ -112,12 +117,21 @@ public class TargetChooserActivity extends AppCompatActivity
                 getString(R.string.default_sharing_label)
         );
         adapter.setListener(this);
+
+        targetActivityViewHeight = getResources().getDimensionPixelSize(R.dimen.target_activity_view_height);
+
         recyclerView.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
                         recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-                        recyclerView.setPadding(0, (int) (recyclerView.getHeight() / 2f), 0, 0);
+
+                        int totalHeight = adapter.getItemCount() * targetActivityViewHeight;
+                        int maxStartingHeight = (int) (recyclerView.getHeight() / 3f);
+                        int startingHeight = Math.min(totalHeight, maxStartingHeight);
+
+
+                        recyclerView.setPadding(0, recyclerView.getHeight() - startingHeight, 0, 0);
                         recyclerView.setTranslationY(recyclerView.getHeight());
                         recyclerView.setAdapter(adapter);
                         recyclerView.animate().translationY(0).setListener(null);
