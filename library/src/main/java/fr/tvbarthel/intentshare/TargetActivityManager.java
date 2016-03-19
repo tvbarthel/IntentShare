@@ -15,11 +15,6 @@ import java.util.List;
  */
 class TargetActivityManager {
 
-    /**
-     * List used to identify mail activities.
-     * Basically, any activity which can handle type 'message/rfc_822'.
-     */
-    private List<String> mailTargetActivities;
 
     /**
      * List of target activities.
@@ -30,7 +25,6 @@ class TargetActivityManager {
      * Manager used to handle all logic linked to {@link TargetActivity}
      */
     public TargetActivityManager() {
-        mailTargetActivities = new ArrayList<>();
         targetActivities = new ArrayList<>();
     }
 
@@ -43,7 +37,6 @@ class TargetActivityManager {
      * @param context context used to resolves target activities.
      */
     public void resolveTargetActivities(Context context) {
-        mailTargetActivities.clear();
         targetActivities.clear();
 
         PackageManager packageManager = context.getPackageManager();
@@ -61,12 +54,6 @@ class TargetActivityManager {
             IntentFilter filter = targetActivity.filter;
             if (filter.hasDataType("text/plain")) {
                 targetActivities.add(new TargetActivity(context, targetActivity));
-                if (filter.hasDataType("message/rfc822")) {
-                    mailTargetActivities.add(
-                            targetActivity.activityInfo.packageName
-                                    + targetActivity.activityInfo.name
-                    );
-                }
             }
         }
     }
@@ -99,7 +86,7 @@ class TargetActivityManager {
         );
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("text/plain");
-        if (mailTargetActivities.contains(packageName + activityName)) {
+        if (targetActivity.isMailClient()) {
             i.putExtra(Intent.EXTRA_TEXT, intentShare.mailBody);
             i.putExtra(Intent.EXTRA_SUBJECT, intentShare.mailSubject);
             addImageExtras(i, intentShare);
