@@ -16,6 +16,7 @@ class TargetActivity {
     private final String activityName;
     private CharSequence activityLabel;
     private Uri iconUri;
+    private boolean isMail;
 
     /**
      * Plain java model for a sharing target activity.
@@ -34,6 +35,7 @@ class TargetActivity {
                         + resolveInfo.activityInfo.applicationInfo.icon
         );
         this.activityLabel = resolveInfo.loadLabel(context.getPackageManager());
+        this.isMail = resolveInfo.filter.hasDataType("message/rfc822");
     }
 
     /**
@@ -70,5 +72,16 @@ class TargetActivity {
      */
     public Uri getIconUri() {
         return iconUri;
+    }
+
+    /**
+     * Used to know if the target activity is a mail client.
+     * <p/>
+     * Basically, any activity which can handle type 'message/rfc_822'.
+     *
+     * @return true if the target activity is a mail client, false otherwise.
+     */
+    public boolean isMailClient() {
+        return isMail;
     }
 }
