@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewTreeObserver;
 
 /**
  * Simple activity used to allow the user to choose a target activity for the sharing intent.
  */
-public class TargetChooserActivity extends AppCompatActivity implements TargetActivityAdapter.Listener {
+public class TargetChooserActivity extends AppCompatActivity
+        implements TargetActivityAdapter.Listener, View.OnClickListener {
 
     /**
      * Extra key used to pass param to the activity.
@@ -72,6 +74,7 @@ public class TargetChooserActivity extends AppCompatActivity implements TargetAc
         intentShare = extras.getParcelable(EXTRA_INTENT_SHARE);
 
         setContentView(R.layout.activity_target_chooser);
+        findViewById(R.id.activity_target_chooser_root_view).setOnClickListener(this);
         recyclerView = ((RecyclerView) findViewById(R.id.activity_target_chooser_recycler_list));
 
         targetActivityManager = new TargetActivityManager();
@@ -81,22 +84,13 @@ public class TargetChooserActivity extends AppCompatActivity implements TargetAc
 
     @Override
     public void onBackPressed() {
-        recyclerView.animate()
-                .translationY(recyclerView.getHeight())
-                .setListener(new AnimatorListenerAdapter() {
-                                 @Override
-                                 public void onAnimationEnd(Animator animation) {
-                                     super.onAnimationEnd(animation);
-                                     TargetChooserActivity.this.finish();
-                                     TargetChooserActivity.this.overridePendingTransition(
-                                             android.R.anim.fade_in,
-                                             android.R.anim.fade_out
-                                     );
-                                 }
-                             }
-                );
+        finishAnimated();
     }
 
+    @Override
+    public void onClick(View v) {
+        finishAnimated();
+    }
 
     @Override
     public void onTargetActivitySelected(TargetActivity targetActivity) {
@@ -131,5 +125,22 @@ public class TargetChooserActivity extends AppCompatActivity implements TargetAc
                     }
                 }
         );
+    }
+
+    private void finishAnimated() {
+        recyclerView.animate()
+                .translationY(recyclerView.getHeight())
+                .setListener(new AnimatorListenerAdapter() {
+                                 @Override
+                                 public void onAnimationEnd(Animator animation) {
+                                     super.onAnimationEnd(animation);
+                                     TargetChooserActivity.this.finish();
+                                     TargetChooserActivity.this.overridePendingTransition(
+                                             android.R.anim.fade_in,
+                                             android.R.anim.fade_out
+                                     );
+                                 }
+                             }
+                );
     }
 }
