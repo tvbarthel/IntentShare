@@ -1,6 +1,7 @@
 package fr.tvbarthel.intentshare;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ class TargetActivityView extends FrameLayout {
     private TargetActivity model;
     private OnClickListener mInternalClickListener;
     private Listener listener;
+    private int height;
 
     /**
      * Simple view used to display a {@link TargetActivity}.
@@ -55,6 +57,11 @@ class TargetActivityView extends FrameLayout {
         }
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+    }
+
     /**
      * Set the view model.
      *
@@ -85,7 +92,11 @@ class TargetActivityView extends FrameLayout {
     private void initialize(Context context) {
         LayoutInflater.from(context).inflate(R.layout.target_activity_view, this);
 
-        int padding = context.getResources().getDimensionPixelSize(R.dimen.default_padding);
+        Resources resources = context.getResources();
+
+        height = resources.getDimensionPixelSize(R.dimen.target_activity_view_height);
+
+        int padding = resources.getDimensionPixelSize(R.dimen.default_padding);
         setPadding(padding, padding, padding, padding);
 
         setForeground(

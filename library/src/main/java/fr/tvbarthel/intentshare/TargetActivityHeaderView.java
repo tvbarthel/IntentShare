@@ -13,6 +13,11 @@ import android.widget.TextView;
 class TargetActivityHeaderView extends TextView {
 
     /**
+     * view height
+     */
+    private int height;
+
+    /**
      * Simple view used to display the label above the target activity list.
      *
      * @param context holding context.
@@ -45,6 +50,11 @@ class TargetActivityHeaderView extends TextView {
         }
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+    }
+
     /**
      * Set the label which going to be displayed inside the header.
      *
@@ -67,6 +77,7 @@ class TargetActivityHeaderView extends TextView {
                 )
         );
         Resources resources = context.getResources();
+        height = resources.getDimensionPixelSize(R.dimen.target_activity_view_height);
         setTextSize(
                 TypedValue.COMPLEX_UNIT_PX,
                 resources.getDimensionPixelSize(R.dimen.target_activity_header_view_font_size)
