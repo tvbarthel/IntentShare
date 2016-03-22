@@ -132,8 +132,7 @@ public class TargetChooserActivity extends AppCompatActivity
     @Override
     public void onTargetActivitySelected(TargetActivity targetActivity) {
         selectedTargetActivity = targetActivity;
-        Intent intent = targetActivityManager.buildTargetActivityIntent(targetActivity, intentShare);
-        startActivity(intent);
+        targetActivityManager.startTargetActivity(this, targetActivity, intentShare);
         finish();
     }
 
