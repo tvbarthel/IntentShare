@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .image(Uri.parse("content://com.example.test.fileprovider/data/img.png"))
                 .facebookBody(Uri.parse("http://only-link.com"))
                 .twitterBody("Tweet can only have 127 char!")
+                .addExtraProvider(
+                        new IntentShare.ExtraProvider("com.google.android.gm")
+                                .disableText()
+                                .overrideSubject("Gmail subject, no mail body.")
+                                .disableImage()
+                )
                 .listener(intentShareListener)
                 .deliver();
     }
