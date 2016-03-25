@@ -4,10 +4,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,11 +17,27 @@ import java.util.List;
  */
 class TargetActivityManager {
 
+    /**
+     * Shared preferences key used to store chosen activities.
+     */
+    private static final String SHARED_PREF_KEY = "shared_pref_target_activities";
+
+    /**
+     * Pattern for last selection key.
+     * string 1 : package name
+     * string 2 : activity name
+     */
+    private static final String KEY_LAST_SELECTION = "shared_pref_last_selection_$1%s_$2%s";
 
     /**
      * List of target activities.
      */
     private List<TargetActivity> targetActivities;
+
+    /**
+     * Shared preferences used to store target activities scores.
+     */
+    private SharedPreferences sharedPreferences;
 
     /**
      * Manager used to handle all logic linked to {@link TargetActivity}
@@ -39,6 +57,8 @@ class TargetActivityManager {
     public void resolveTargetActivities(Context context) {
         targetActivities.clear();
 
+        sharedPreferences = context.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+
         PackageManager packageManager = context.getPackageManager();
 
         Intent intentShare = new Intent(Intent.ACTION_SEND);
@@ -50,12 +70,32 @@ class TargetActivityManager {
         );
 
         for (int i = 0; i < shareActivities.size(); i++) {
-            ResolveInfo targetActivity = shareActivities.get(i);
-            IntentFilter filter = targetActivity.filter;
+            ResolveInfo targetActivityInfo = shareActivities.get(i);
+            IntentFilter filter = targetActivityInfo.filter;
             if (filter.hasDataType("text/plain")) {
-                targetActivities.add(new TargetActivity(context, targetActivity));
+
+                String lastSelectionKey = getLastSelectionKey(
+                        targetActivityInfo.activityInfo.packageName,
+                        targetActivityInfo.activityInfo.name
+                );
+
+                long lastSelection = sharedPreferences.getLong(lastSelectionKey, 0);
+
+                targetActivities.add(
+                        new TargetActivity(
+                                context,
+                                targetActivityInfo,
+                                lastSelection
+                        )
+                );
             }
         }
+
+        Collections.sort(targetActivities, new TargetActivity.RecencyComparator());
+    }
+
+    private String getLastSelectionKey(String packageName, String activityName) {
+        return String.format(KEY_LAST_SELECTION, packageName, activityName);
     }
 
     /**
@@ -70,6 +110,33 @@ class TargetActivityManager {
     }
 
     /**
+     * Start a target activity with well field params according to the given {@link IntentShare}
+     *
+     * @param context        context used to start the activity.
+     * @param targetActivity target activity to start.
+     * @param intentShare    data which should be send to the target activity.
+     */
+    public void startTargetActivity(Context context, TargetActivity targetActivity, IntentShare intentShare) {
+        context.startActivity(
+                buildTargetActivityIntent(
+                        targetActivity,
+                        intentShare
+                )
+        );
+
+        sharedPreferences
+                .edit()
+                .putLong(getLastSelectionKey(
+                                targetActivity.getPackageName(),
+                                targetActivity.getActivityName()
+                        ),
+                        System.currentTimeMillis()
+                )
+                .apply();
+
+    }
+
+    /**
      * Build the intent with {@link Intent#ACTION_SEND} action used to start the target activity
      * with well field params according to the given {@link IntentShare}.
      *
@@ -77,7 +144,7 @@ class TargetActivityManager {
      * @param intentShare    shared content used to field the intent params.
      * @return {@link Intent#ACTION_SEND} field to start the target activity.
      */
-    public Intent buildTargetActivityIntent(TargetActivity targetActivity, IntentShare intentShare) {
+    private Intent buildTargetActivityIntent(TargetActivity targetActivity, IntentShare intentShare) {
         String packageName = targetActivity.getPackageName();
         String activityName = targetActivity.getActivityName();
         ComponentName componentName = new ComponentName(
@@ -116,4 +183,5 @@ class TargetActivityManager {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
     }
+
 }
