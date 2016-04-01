@@ -10,8 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 /**
  * Simple view used to display a {@link TargetActivity}.
  */
@@ -23,14 +21,20 @@ class TargetActivityView extends FrameLayout {
     private OnClickListener mInternalClickListener;
     private Listener listener;
     private int height;
+    private IconLoader loader;
 
     /**
      * Simple view used to display a {@link TargetActivity}.
      *
      * @param context holding context.
+     * @param loader  loader used to load {@link TargetActivity} icon.
      */
-    public TargetActivityView(Context context) {
-        this(context, null);
+    public TargetActivityView(Context context, IconLoader loader) {
+        super(context);
+        if (!isInEditMode()) {
+            initialize(context);
+        }
+        this.loader = loader;
     }
 
     /**
@@ -40,7 +44,10 @@ class TargetActivityView extends FrameLayout {
      * @param attrs   attr from xml.
      */
     public TargetActivityView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        if (!isInEditMode()) {
+            initialize(context);
+        }
     }
 
     /**
@@ -70,9 +77,22 @@ class TargetActivityView extends FrameLayout {
     public void setModel(TargetActivity model) {
         this.model = model;
         if (this.model != null) {
-            Picasso.with(getContext()).load(model.getIconUri()).fit().centerInside().into(icon);
             label.setText(model.getActivityLabel());
         }
+    }
+
+    /**
+     * Load the target activity icon.
+     */
+    public void loadIcon() {
+        loader.load(model.getIconUri(), icon);
+    }
+
+    /**
+     * Cancel the loading of the target activity icon.
+     */
+    public void cancelIconLoading() {
+        loader.cancel(icon);
     }
 
     /**
