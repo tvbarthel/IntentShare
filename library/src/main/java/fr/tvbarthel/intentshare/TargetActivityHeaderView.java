@@ -3,6 +3,7 @@ package fr.tvbarthel.intentshare;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
@@ -88,6 +89,8 @@ class TargetActivityHeaderView extends TextView {
                         R.color.target_activity_header_view_text_color
                 )
         );
+        setSingleLine(true);
+        setEllipsize(TextUtils.TruncateAt.END);
         int padding = resources.getDimensionPixelSize(R.dimen.default_padding);
         setPadding(padding, padding, padding, padding);
     }

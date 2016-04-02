@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         IntentShare.with(MainActivity.this)
+                .chooserTitle("Select a sharing target : ")
                 .text("Default text you would like to share.")
                 .mailBody("Extended text you would like to share in mail body.")
                 .mailSubject("Mail subject.")

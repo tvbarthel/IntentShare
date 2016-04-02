@@ -191,7 +191,7 @@ public class TargetChooserActivity extends AppCompatActivity
         );
         adapter = new TargetActivityAdapter(
                 targetActivityManager.getTargetActivities(),
-                getString(R.string.default_sharing_label),
+                intentShare.chooserTitle,
                 intentShare.iconLoader
         );
         adapter.setListener(this);
@@ -243,7 +243,7 @@ public class TargetChooserActivity extends AppCompatActivity
     private void setUpStickyTitle() {
         stickyTitle.setVisibility(View.INVISIBLE);
         stickyShadow.setVisibility(View.INVISIBLE);
-        stickyTitle.setModel(getString(R.string.default_sharing_label));
+        stickyTitle.setModel(intentShare.chooserTitle);
         isStickyTitleDisplayed = false;
     }
 
