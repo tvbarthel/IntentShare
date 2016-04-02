@@ -24,9 +24,19 @@ public class TargetChooserActivity extends AppCompatActivity
     private static final String EXTRA_INTENT_SHARE = "tca_extra_intent_share";
 
     /**
+     * Key used to save the current scroll during rotation.
+     */
+    private static final String SAVED_CURRENT_SCROLL_Y = "tca_saved_instance_key_current_scroll";
+
+    /**
      * Recycler view used to display the list of target application.
      */
     private RecyclerView recyclerView;
+
+    /**
+     * Padding top applied to the recycler view.
+     */
+    private int recyclerPaddingTop;
 
     /**
      * Adapter used to display target activity inside a list.
@@ -59,10 +69,32 @@ public class TargetChooserActivity extends AppCompatActivity
     private boolean listenerNotified;
 
     /**
+     * Sticky header view displayed to keep an eye on the contextual action when the
+     * header inside the list is hidden.
+     */
+    private TargetActivityHeaderView stickyTitle;
+
+    /**
+     * Sticky header shadow.
+     */
+    private View stickyShadow;
+
+    /**
+     * Boolean used to know if the sticky header is displayed.
+     */
+    private boolean isStickyTitleDisplayed;
+
+    /**
+     * Used to keep current recycler scroll y up to date.
+     */
+    private int currentRecyclerScrollY;
+    private View rootView;
+
+    /**
      * Simple activity used to allow the user to choose a target activity for the sharing intent.
      *
      * @param context     context used to start the activity.
-     * @param intentShare data to share.
+     * @param intentShare data to share
      */
     public static void start(Context context, IntentShare intentShare) {
         Intent intent = new Intent(context, TargetChooserActivity.class);
@@ -89,20 +121,32 @@ public class TargetChooserActivity extends AppCompatActivity
         intentShare = extras.getParcelable(EXTRA_INTENT_SHARE);
 
         setContentView(R.layout.activity_target_chooser);
-        findViewById(R.id.activity_target_chooser_root_view).setOnClickListener(this);
+        rootView = findViewById(R.id.activity_target_chooser_root_view);
         recyclerView = ((RecyclerView) findViewById(R.id.activity_target_chooser_recycler_list));
+        stickyTitle = ((TargetActivityHeaderView) findViewById(R.id.activity_chooser_sticky_title));
+        stickyShadow = findViewById(R.id.activity_chooser_sticky_title_shadow);
 
         targetActivityManager = new TargetActivityManager();
         targetActivityManager.resolveTargetActivities(this);
-        setUpRecyclerView();
 
         selectedTargetActivity = null;
         listenerNotified = false;
+
+        rootView.setOnClickListener(this);
+
+        setUpRecyclerView(savedInstanceState);
+        setUpStickyTitle();
     }
 
     @Override
     public void onBackPressed() {
         finishAnimated();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SAVED_CURRENT_SCROLL_Y, currentRecyclerScrollY);
     }
 
     @Override
@@ -136,7 +180,8 @@ public class TargetChooserActivity extends AppCompatActivity
         finish();
     }
 
-    private void setUpRecyclerView() {
+
+    private void setUpRecyclerView(Bundle savedInstance) {
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(
                         this,
@@ -157,13 +202,11 @@ public class TargetChooserActivity extends AppCompatActivity
                     @Override
                     public boolean onPreDraw() {
                         recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-
                         int totalHeight = adapter.getItemCount() * targetActivityViewHeight;
                         int maxStartingHeight = (int) (recyclerView.getHeight() / 3f);
                         int startingHeight = Math.min(totalHeight, maxStartingHeight);
-
-
-                        recyclerView.setPadding(0, recyclerView.getHeight() - startingHeight, 0, 0);
+                        recyclerPaddingTop = recyclerView.getHeight() - startingHeight;
+                        recyclerView.setPadding(0, recyclerPaddingTop, 0, 0);
                         recyclerView.setTranslationY(recyclerView.getHeight());
                         recyclerView.setAdapter(adapter);
                         recyclerView.animate().translationY(0).setListener(null);
@@ -171,11 +214,41 @@ public class TargetChooserActivity extends AppCompatActivity
                     }
                 }
         );
+        if (savedInstance != null) {
+            currentRecyclerScrollY = savedInstance.getInt(SAVED_CURRENT_SCROLL_Y, 0);
+        } else {
+            currentRecyclerScrollY = 0;
+        }
+        recyclerView.addOnScrollListener(
+                new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        currentRecyclerScrollY += dy;
+                        if (!isStickyTitleDisplayed && currentRecyclerScrollY >= recyclerPaddingTop) {
+                            isStickyTitleDisplayed = true;
+                            stickyTitle.setVisibility(View.VISIBLE);
+                            stickyShadow.setVisibility(View.VISIBLE);
+                        } else if (isStickyTitleDisplayed && currentRecyclerScrollY < recyclerPaddingTop) {
+                            isStickyTitleDisplayed = false;
+                            stickyTitle.setVisibility(View.INVISIBLE);
+                            stickyShadow.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                }
+        );
+    }
+
+    private void setUpStickyTitle() {
+        stickyTitle.setVisibility(View.INVISIBLE);
+        stickyShadow.setVisibility(View.INVISIBLE);
+        stickyTitle.setModel(getString(R.string.default_sharing_label));
+        isStickyTitleDisplayed = false;
     }
 
     private void finishAnimated() {
-        recyclerView.animate()
-                .translationY(recyclerView.getHeight())
+        rootView.animate()
+                .translationY(rootView.getHeight())
                 .setListener(new AnimatorListenerAdapter() {
                                  @Override
                                  public void onAnimationEnd(Animator animation) {

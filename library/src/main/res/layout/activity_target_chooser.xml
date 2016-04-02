@@ -2,11 +2,25 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_target_chooser_root_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <fr.tvbarthel.intentshare.BottomRecyclerView
         android:id="@+id/activity_target_chooser_recycler_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false" />
+
+    <fr.tvbarthel.intentshare.TargetActivityHeaderView
+        android:id="@+id/activity_chooser_sticky_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/activity_chooser_sticky_title_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginTop="@dimen/target_activity_view_height"
+        android:background="@drawable/shadow_bottom" />
+
 </FrameLayout>
