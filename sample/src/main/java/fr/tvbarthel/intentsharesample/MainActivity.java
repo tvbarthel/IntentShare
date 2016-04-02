@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .mailBody("Extended text you would like to share in mail body.")
                 .mailSubject("Mail subject.")
                 .image(Uri.parse("content://com.example.test.fileprovider/data/img.png"))
-                .facebookBody(Uri.parse("http://only-link.com"))
+                .facebookBody(Uri.parse("http://tvbarthel.fr"))
                 .twitterBody("Tweet can only have 127 char!")
                 .addExtraProvider(
                         new IntentShare.ExtraProvider("com.google.android.gm")
