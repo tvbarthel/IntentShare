@@ -201,6 +201,7 @@ class TargetActivityManager {
             }
             if (extraProvider.imageDisabled) {
                 intent.removeExtra(Intent.EXTRA_STREAM);
+                intent.setType("text/plain");
             } else if (extraProvider.overriddenImage != null) {
                 intent.putExtra(Intent.EXTRA_STREAM, extraProvider.overriddenImage);
             }
