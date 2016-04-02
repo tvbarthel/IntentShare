@@ -191,7 +191,8 @@ public class TargetChooserActivity extends AppCompatActivity
         );
         adapter = new TargetActivityAdapter(
                 targetActivityManager.getTargetActivities(),
-                getString(R.string.default_sharing_label)
+                getString(R.string.default_sharing_label),
+                intentShare.iconLoader
         );
         adapter.setListener(this);
 

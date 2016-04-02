@@ -72,6 +72,11 @@ public final class IntentShare implements Parcelable {
 
 
     /**
+     * Icon loader used to load icons.
+     */
+    IconLoader iconLoader;
+
+    /**
      * Context used to start the activity used to choose a target one.
      */
     private Context context;
@@ -88,6 +93,7 @@ public final class IntentShare implements Parcelable {
         extraProviders = new ArrayList<>();
         packageWithExtraProvider = new ArrayList<>();
         this.listener = null;
+        this.iconLoader = new AsyncIconLoader();
     }
 
     /**
@@ -102,6 +108,7 @@ public final class IntentShare implements Parcelable {
         this.mailBody = in.readString();
         this.mailSubject = in.readString();
         this.extraProviders = in.createTypedArrayList(ExtraProvider.CREATOR);
+        this.iconLoader = in.readParcelable(IconLoader.class.getClassLoader());
     }
 
     @Override
@@ -116,6 +123,7 @@ public final class IntentShare implements Parcelable {
         dest.writeString(this.mailBody);
         dest.writeString(this.mailSubject);
         dest.writeTypedList(this.extraProviders);
+        dest.writeParcelable(this.iconLoader, flags);
     }
 
     /**
@@ -128,6 +136,17 @@ public final class IntentShare implements Parcelable {
     @NonNull
     public static IntentShare with(@NonNull Context context) {
         return new IntentShare(context);
+    }
+
+    /**
+     * Set the {@link IconLoader} used to load target activities icon.
+     *
+     * @param iconLoader icon loader.
+     * @return current {@link IntentShare} for method chaining.
+     */
+    public IntentShare iconLoader(@NonNull IconLoader iconLoader) {
+        this.iconLoader = iconLoader;
+        return this;
     }
 
     /**

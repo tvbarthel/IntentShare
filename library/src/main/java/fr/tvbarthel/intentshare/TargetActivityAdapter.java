@@ -16,6 +16,7 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
     private static final int VIEW_TYPE_HEADER = 0x00000001;
     private static final int VIEW_TYPE_RAW = 0x00000002;
     private final String label;
+    private final IconLoader iconLoader;
 
     /**
      * Target activity info adapted.
@@ -37,8 +38,11 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
      *
      * @param targetActivities list of target activities.
      * @param label            label to display as an header of the list.
+     * @param iconLoader       loader used to load {@link TargetActivity} icon.
      */
-    public TargetActivityAdapter(final List<TargetActivity> targetActivities, String label) {
+    public TargetActivityAdapter(final List<TargetActivity> targetActivities,
+                                 String label,
+                                 IconLoader iconLoader) {
         this.targetActivities = targetActivities;
         this.label = label;
         internalTargetActivityViewListener = new TargetActivityView.Listener() {
@@ -49,6 +53,7 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
                 }
             }
         };
+        this.iconLoader = iconLoader;
     }
 
     @Override
@@ -59,11 +64,13 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
         );
         switch (viewType) {
             case VIEW_TYPE_HEADER:
-                TargetActivityHeaderView headerView = new TargetActivityHeaderView(parent.getContext());
+                TargetActivityHeaderView headerView
+                        = new TargetActivityHeaderView(parent.getContext());
                 headerView.setLayoutParams(layoutParams);
                 return new ViewHolder(headerView);
             case VIEW_TYPE_RAW:
-                TargetActivityView targetActivityView = new TargetActivityView(parent.getContext());
+                TargetActivityView targetActivityView
+                        = new TargetActivityView(parent.getContext(), iconLoader);
                 targetActivityView.setLayoutParams(layoutParams);
                 targetActivityView.setListener(internalTargetActivityViewListener);
                 return new ViewHolder(targetActivityView);
@@ -81,7 +88,9 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
                 break;
             case VIEW_TYPE_RAW:
                 // -1 for the header.
-                ((TargetActivityView) holder.itemView).setModel(targetActivities.get(position - 1));
+                TargetActivityView targetActivityView = (TargetActivityView) holder.itemView;
+                targetActivityView.setModel(targetActivities.get(position - 1));
+                targetActivityView.loadIcon();
                 break;
             default:
                 throw new IllegalStateException("Can't bind view "
@@ -89,6 +98,13 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
         }
     }
 
+    @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder.itemView instanceof TargetActivityView) {
+            ((TargetActivityView) holder.itemView).cancelIconLoading();
+        }
+    }
 
     @Override
     public int getItemCount() {
