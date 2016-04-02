@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -151,34 +152,64 @@ class TargetActivityManager {
                 packageName,
                 activityName
         );
-        Intent i = new Intent(Intent.ACTION_SEND);
-        i.setType("text/plain");
-        if (targetActivity.isMailClient()) {
-            i.putExtra(Intent.EXTRA_TEXT, intentShare.mailBody);
-            i.putExtra(Intent.EXTRA_SUBJECT, intentShare.mailSubject);
-            addImageExtras(i, intentShare);
-        } else {
-            switch (packageName) {
-                case IntentShare.FACEBOOK:
-                    i.putExtra(Intent.EXTRA_TEXT, intentShare.facebookLink);
-                    break;
-                case IntentShare.TWITTER:
-                    i.putExtra(Intent.EXTRA_TEXT, intentShare.tweet);
-                    addImageExtras(i, intentShare);
-                    break;
-                default:
-                    i.putExtra(Intent.EXTRA_TEXT, intentShare.text);
-                    addImageExtras(i, intentShare);
-                    break;
-            }
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        if (targetActivity.isMailClient()) { // mail target
+            intent.putExtra(Intent.EXTRA_TEXT, intentShare.mailBody);
+            intent.putExtra(Intent.EXTRA_SUBJECT, intentShare.mailSubject);
+            addImageExtras(intent, intentShare.imageUri);
+        } else { // other target
+            intent.putExtra(Intent.EXTRA_TEXT, intentShare.text);
+            addImageExtras(intent, intentShare.imageUri);
         }
-        i.setComponent(componentName);
-        return i;
+        applyExtraProvider(intent, packageName, intentShare.extraProviders);
+        intent.setComponent(componentName);
+        return intent;
     }
 
-    private void addImageExtras(Intent intent, IntentShare intentShare) {
-        if (intentShare.imageUri != null) {
-            intent.putExtra(Intent.EXTRA_STREAM, intentShare.imageUri);
+    /**
+     * Apply the extra provider to the current intent if one is associated to the targeted package.
+     *
+     * @param intent            intent send.
+     * @param targetPackageName targeted package.
+     * @param extraProviders    list of extra providers.
+     */
+    private void applyExtraProvider(
+            Intent intent,
+            String targetPackageName,
+            ArrayList<IntentShare.ExtraProvider> extraProviders) {
+
+        IntentShare.ExtraProvider extraProvider = null;
+        for (int i = 0; i < extraProviders.size(); i++) {
+            IntentShare.ExtraProvider provider = extraProviders.get(i);
+            if (provider.packageName.equals(targetPackageName)) {
+                extraProvider = provider;
+                break;
+            }
+        }
+
+        if (extraProvider != null) {
+            if (extraProvider.textDisabled) {
+                intent.removeExtra(Intent.EXTRA_TEXT);
+            } else if (extraProvider.overriddenText != null) {
+                intent.putExtra(Intent.EXTRA_TEXT, extraProvider.overriddenText);
+            }
+            if (extraProvider.subjectDisabled) {
+                intent.removeExtra(Intent.EXTRA_SUBJECT);
+            } else if (extraProvider.overriddenSubject != null) {
+                intent.putExtra(Intent.EXTRA_SUBJECT, extraProvider.overriddenSubject);
+            }
+            if (extraProvider.imageDisabled) {
+                intent.removeExtra(Intent.EXTRA_STREAM);
+            } else if (extraProvider.overriddenImage != null) {
+                intent.putExtra(Intent.EXTRA_STREAM, extraProvider.overriddenImage);
+            }
+        }
+    }
+
+    private void addImageExtras(Intent intent, Uri imageUri) {
+        if (imageUri != null) {
+            intent.putExtra(Intent.EXTRA_STREAM, imageUri);
             intent.setType("image/jpeg");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }

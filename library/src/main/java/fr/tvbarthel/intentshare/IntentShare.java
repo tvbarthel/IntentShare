@@ -6,6 +6,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@link IntentShare} is designed to enhance the sharing experience by allowing to share
  * different content according to the application the user will choose to share with.
@@ -56,14 +59,17 @@ public final class IntentShare implements Parcelable {
     String mailSubject;
 
     /**
-     * Link used as facebook content when the target application is the facebook one.
+     * Specific extra provider for some package.
      */
-    Uri facebookLink;
+    ArrayList<ExtraProvider> extraProviders;
 
     /**
-     * Text used as tweet content when the target application is the Twitter one.
+     * Keep a track on package with a specific
+     * {@link fr.tvbarthel.intentshare.IntentShare.ExtraProvider} in order to warn the user when
+     * two provider are added for the same package.
      */
-    String tweet;
+    List<String> packageWithExtraProvider;
+
 
     /**
      * Context used to start the activity used to choose a target one.
@@ -79,6 +85,8 @@ public final class IntentShare implements Parcelable {
      */
     private IntentShare(Context context) {
         this.context = context;
+        extraProviders = new ArrayList<>();
+        packageWithExtraProvider = new ArrayList<>();
         this.listener = null;
     }
 
@@ -93,8 +101,7 @@ public final class IntentShare implements Parcelable {
         this.imageUri = in.readParcelable(Uri.class.getClassLoader());
         this.mailBody = in.readString();
         this.mailSubject = in.readString();
-        this.facebookLink = in.readParcelable(Uri.class.getClassLoader());
-        this.tweet = in.readString();
+        this.extraProviders = in.createTypedArrayList(ExtraProvider.CREATOR);
     }
 
     @Override
@@ -108,8 +115,7 @@ public final class IntentShare implements Parcelable {
         dest.writeParcelable(this.imageUri, 0);
         dest.writeString(this.mailBody);
         dest.writeString(this.mailSubject);
-        dest.writeParcelable(this.facebookLink, 0);
-        dest.writeString(this.tweet);
+        dest.writeTypedList(this.extraProviders);
     }
 
     /**
@@ -205,8 +211,16 @@ public final class IntentShare implements Parcelable {
         if (!"http".equals(scheme) && !"https".equals(scheme)) {
             throw new IllegalArgumentException("Invalid facebook link : un handled scheme : "
                     + scheme);
+        } else if (packageWithExtraProvider.contains(IntentShare.FACEBOOK)) {
+            throw new IllegalArgumentException("Facebook link can only be set once.");
         } else {
-            facebookLink = link;
+            packageWithExtraProvider.add(IntentShare.FACEBOOK);
+            extraProviders.add(
+                    new ExtraProvider(IntentShare.FACEBOOK)
+                            .overrideText(link.toString())
+                            .disableImage()
+                            .disableSubject()
+            );
         }
         return this;
     }
@@ -224,8 +238,14 @@ public final class IntentShare implements Parcelable {
         if (tweet.length() > 140) {
             throw new IllegalArgumentException("Invalid tweet content : "
                     + "exceed the 140-Character limit : " + tweet);
+        } else if (packageWithExtraProvider.contains(IntentShare.TWITTER)) {
+            throw new IllegalArgumentException("Twitter body can only be set once.");
         } else {
-            this.tweet = tweet;
+            packageWithExtraProvider.add(IntentShare.TWITTER);
+            extraProviders.add(
+                    new ExtraProvider(TWITTER)
+                            .overrideText(tweet)
+            );
         }
         return this;
     }
@@ -244,6 +264,23 @@ public final class IntentShare implements Parcelable {
     }
 
     /**
+     * Allow to add a specific intent for a given
+     *
+     * @param extraProvider extra provider for a given package;
+     * @return current {@link IntentShare} for method chaining.
+     */
+    public IntentShare addExtraProvider(@NonNull ExtraProvider extraProvider) {
+        if (extraProvider == null) {
+            throw new IllegalArgumentException("Extra provider can't be null");
+        } else if (packageWithExtraProvider.contains(extraProvider.packageName)) {
+            throw new IllegalArgumentException("Extra provider already provided for the package : "
+                    + extraProvider.packageName);
+        }
+        extraProviders.add(extraProvider);
+        return this;
+    }
+
+    /**
      * Deliver the intent to the system.
      * <p/>
      * This will lead to the display of every applications that can handle the build intent.
@@ -254,5 +291,235 @@ public final class IntentShare implements Parcelable {
             this.listener.register(context);
         }
         TargetChooserActivity.start(context, this);
+    }
+
+    /**
+     * Used to provide specific extras for a given package name
+     */
+    public static class ExtraProvider implements Parcelable {
+
+        /**
+         * Parcelable.
+         */
+        public static final Creator<ExtraProvider> CREATOR = new Creator<ExtraProvider>() {
+            @Override
+            public ExtraProvider createFromParcel(Parcel source) {
+                return new ExtraProvider(source);
+            }
+
+            @Override
+            public ExtraProvider[] newArray(int size) {
+                return new ExtraProvider[size];
+            }
+        };
+        /**
+         * Package for which specific extras must be provided.
+         */
+        String packageName;
+
+        /**
+         * Specific text to provide.
+         */
+        String overriddenText;
+
+        /**
+         * Specific mail subject to provide.
+         */
+        String overriddenSubject;
+
+        /**
+         * Specific image to provide.
+         */
+        Uri overriddenImage;
+
+        /**
+         * Used to know if default text must be removed.
+         */
+        boolean textDisabled;
+
+        /**
+         * Used to know if default subject must be removed.
+         */
+        boolean subjectDisabled;
+
+        /**
+         * Used to know if default image must be removed.
+         */
+        boolean imageDisabled;
+
+        /**
+         * Used to provide specific extras for a given package name.
+         * <p/>
+         * By default, every extras are going to be copied from the {@link IntentShare}.
+         * <p/>
+         * To override extras :
+         * {@link ExtraProvider#overrideText(String)}
+         * {@link ExtraProvider#overrideSubject(String)}
+         * {@link ExtraProvider#overrideImage(Uri)}
+         *
+         * @param packageName package for which the extras are going to be applied;
+         */
+        public ExtraProvider(String packageName) {
+            this.packageName = packageName;
+            this.overriddenText = null;
+            this.overriddenSubject = null;
+            this.overriddenImage = null;
+            this.textDisabled = false;
+            this.subjectDisabled = false;
+            this.imageDisabled = false;
+        }
+
+        /**
+         * Used to provide specific extras for a given package name.
+         * <p/>
+         * By default, every extras are going to be copied from the {@link IntentShare}.
+         * <p/>
+         * To override extras :
+         * {@link ExtraProvider#overrideText(String)}
+         * {@link ExtraProvider#overrideSubject(String)}
+         * {@link ExtraProvider#overrideImage(Uri)}
+         *
+         * @param in parcel.
+         */
+        protected ExtraProvider(Parcel in) {
+            this.packageName = in.readString();
+            this.overriddenText = in.readString();
+            this.overriddenSubject = in.readString();
+            this.overriddenImage = in.readParcelable(Uri.class.getClassLoader());
+            this.textDisabled = in.readByte() != 0;
+            this.subjectDisabled = in.readByte() != 0;
+            this.imageDisabled = in.readByte() != 0;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            ExtraProvider that = (ExtraProvider) o;
+
+            if (textDisabled != that.textDisabled) {
+                return false;
+            }
+            if (subjectDisabled != that.subjectDisabled) {
+                return false;
+            }
+            if (imageDisabled != that.imageDisabled) {
+                return false;
+            }
+            if (packageName != null ? !packageName.equals(that.packageName)
+                    : that.packageName != null) {
+                return false;
+            }
+            if (overriddenText != null ? !overriddenText.equals(that.overriddenText)
+                    : that.overriddenText != null) {
+                return false;
+            }
+            if (overriddenSubject != null ? !overriddenSubject.equals(that.overriddenSubject)
+                    : that.overriddenSubject != null) {
+                return false;
+            }
+            return !(overriddenImage != null ? !overriddenImage.equals(that.overriddenImage)
+                    : that.overriddenImage != null);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = packageName != null ? packageName.hashCode() : 0;
+            result = 31 * result + (overriddenText != null ? overriddenText.hashCode() : 0);
+            result = 31 * result + (overriddenSubject != null ? overriddenSubject.hashCode() : 0);
+            result = 31 * result + (overriddenImage != null ? overriddenImage.hashCode() : 0);
+            result = 31 * result + (textDisabled ? 1 : 0);
+            result = 31 * result + (subjectDisabled ? 1 : 0);
+            result = 31 * result + (imageDisabled ? 1 : 0);
+            return result;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.packageName);
+            dest.writeString(this.overriddenText);
+            dest.writeString(this.overriddenSubject);
+            dest.writeParcelable(this.overriddenImage, flags);
+            dest.writeByte(textDisabled ? (byte) 1 : (byte) 0);
+            dest.writeByte(subjectDisabled ? (byte) 1 : (byte) 0);
+            dest.writeByte(imageDisabled ? (byte) 1 : (byte) 0);
+        }
+
+        /**
+         * Provide a specific text for the linked package name.
+         *
+         * @param text text which will be used as {@link android.content.Intent#EXTRA_TEXT}
+         * @return {@link ExtraProvider} for chaining.
+         */
+        public ExtraProvider overrideText(String text) {
+            this.overriddenText = text;
+            return this;
+        }
+
+        /**
+         * Provide a specific subject for the linked package name.
+         *
+         * @param subject subject which will be used as {@link android.content.Intent#EXTRA_SUBJECT}
+         * @return {@link ExtraProvider} for chaining.
+         */
+        public ExtraProvider overrideSubject(String subject) {
+            this.overriddenSubject = subject;
+            return this;
+        }
+
+        /**
+         * Provide a specific image for the linked package name.
+         *
+         * @param image image which will be used as {@link android.content.Intent#EXTRA_STREAM}
+         * @return {@link ExtraProvider} for chaining.
+         */
+        public ExtraProvider overrideImage(Uri image) {
+            this.overriddenImage = image;
+            return this;
+        }
+
+        /**
+         * Disable the extra {@link android.content.Intent#EXTRA_TEXT} for the linked package
+         * to avoid a copy from the default {@link IntentShare} text.
+         *
+         * @return {@link ExtraProvider} for chaining.
+         */
+        public ExtraProvider disableText() {
+            this.textDisabled = true;
+            return this;
+        }
+
+        /**
+         * Disable the extra {@link android.content.Intent#EXTRA_SUBJECT} for the linked package
+         * to avoid a copy from the default {@link IntentShare} subject.
+         *
+         * @return {@link ExtraProvider} for chaining.
+         */
+        public ExtraProvider disableSubject() {
+            this.subjectDisabled = true;
+            return this;
+        }
+
+        /**
+         * Disable the extra {@link android.content.Intent#EXTRA_STREAM} for the linked package
+         * to avoid a copy from the default {@link IntentShare} image.
+         *
+         * @return {@link ExtraProvider} for chaining.
+         */
+        public ExtraProvider disableImage() {
+            this.imageDisabled = true;
+            return this;
+        }
     }
 }
