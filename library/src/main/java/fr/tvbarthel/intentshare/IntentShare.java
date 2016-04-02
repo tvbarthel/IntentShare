@@ -77,6 +77,11 @@ public final class IntentShare implements Parcelable {
     IconLoader iconLoader;
 
     /**
+     * Title that will be displayed in the chooser.
+     */
+    String chooserTitle;
+
+    /**
      * Context used to start the activity used to choose a target one.
      */
     private Context context;
@@ -94,6 +99,7 @@ public final class IntentShare implements Parcelable {
         packageWithExtraProvider = new ArrayList<>();
         this.listener = null;
         this.iconLoader = new AsyncIconLoader();
+        this.chooserTitle = context.getString(R.string.default_sharing_label);
     }
 
     /**
@@ -109,6 +115,7 @@ public final class IntentShare implements Parcelable {
         this.mailSubject = in.readString();
         this.extraProviders = in.createTypedArrayList(ExtraProvider.CREATOR);
         this.iconLoader = in.readParcelable(IconLoader.class.getClassLoader());
+        this.chooserTitle = in.readString();
     }
 
     @Override
@@ -124,6 +131,7 @@ public final class IntentShare implements Parcelable {
         dest.writeString(this.mailSubject);
         dest.writeTypedList(this.extraProviders);
         dest.writeParcelable(this.iconLoader, flags);
+        dest.writeString(this.chooserTitle);
     }
 
     /**
@@ -136,6 +144,19 @@ public final class IntentShare implements Parcelable {
     @NonNull
     public static IntentShare with(@NonNull Context context) {
         return new IntentShare(context);
+    }
+
+    /**
+     * Title that will be displayed in the chooser.
+     * <p/>
+     * Will be displayed on a single line.
+     *
+     * @param title title that will be displayed in the chooser.
+     * @return current {@link IntentShare} for method chaining.
+     */
+    public IntentShare chooserTitle(@NonNull String title) {
+        this.chooserTitle = title;
+        return this;
     }
 
     /**
