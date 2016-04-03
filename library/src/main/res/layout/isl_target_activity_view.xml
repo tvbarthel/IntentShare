@@ -5,20 +5,20 @@
 
     <ImageView
         android:id="@+id/target_activity_view_icon"
-        android:layout_width="@dimen/target_activity_view_icon_size"
-        android:layout_height="@dimen/target_activity_view_icon_size"
+        android:layout_width="@dimen/isl_target_activity_view_icon_size"
+        android:layout_height="@dimen/isl_target_activity_view_icon_size"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/target_activity_icon_margin_left"/>
+        android:layout_marginLeft="@dimen/isl_target_activity_icon_margin_left"/>
 
     <TextView
         android:id="@+id/target_activity_view_label"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/target_activity_view_label_margin_left"
+        android:layout_marginLeft="@dimen/isl_target_activity_view_label_margin_left"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/target_activity_view_label"
+        android:textColor="@color/isl_target_activity_view_label"
         android:textSize="19sp"/>
 
 </merge>

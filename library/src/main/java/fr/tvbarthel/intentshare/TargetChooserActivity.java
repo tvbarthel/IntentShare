@@ -120,7 +120,7 @@ public class TargetChooserActivity extends AppCompatActivity
         }
         intentShare = extras.getParcelable(EXTRA_INTENT_SHARE);
 
-        setContentView(R.layout.activity_target_chooser);
+        setContentView(R.layout.isl_activity_target_chooser);
         rootView = findViewById(R.id.activity_target_chooser_root_view);
         recyclerView = ((RecyclerView) findViewById(R.id.activity_target_chooser_recycler_list));
         stickyTitle = ((TargetActivityHeaderView) findViewById(R.id.activity_chooser_sticky_title));
@@ -196,7 +196,7 @@ public class TargetChooserActivity extends AppCompatActivity
         );
         adapter.setListener(this);
 
-        targetActivityViewHeight = getResources().getDimensionPixelSize(R.dimen.target_activity_view_height);
+        targetActivityViewHeight = getResources().getDimensionPixelSize(R.dimen.isl_target_activity_view_height);
 
         recyclerView.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {

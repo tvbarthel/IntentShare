@@ -121,7 +121,7 @@ class AsyncIconLoader implements IconLoader {
 
             imageTarget = imageView;
             targetSize = imageView.getContext().getResources()
-                    .getDimensionPixelSize(R.dimen.target_activity_view_icon_size);
+                    .getDimensionPixelSize(R.dimen.isl_target_activity_view_icon_size);
         }
 
         @Override
