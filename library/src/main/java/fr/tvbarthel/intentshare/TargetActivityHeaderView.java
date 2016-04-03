@@ -74,24 +74,24 @@ class TargetActivityHeaderView extends TextView {
         setBackgroundColor(
                 ContextCompat.getColor(
                         context,
-                        R.color.target_activity_header_view_background
+                        R.color.isl_target_activity_header_view_background
                 )
         );
         Resources resources = context.getResources();
-        height = resources.getDimensionPixelSize(R.dimen.target_activity_view_height);
+        height = resources.getDimensionPixelSize(R.dimen.isl_target_activity_view_height);
         setTextSize(
                 TypedValue.COMPLEX_UNIT_PX,
-                resources.getDimensionPixelSize(R.dimen.target_activity_header_view_font_size)
+                resources.getDimensionPixelSize(R.dimen.isl_target_activity_header_view_font_size)
         );
         setTextColor(
                 ContextCompat.getColor(
                         context,
-                        R.color.target_activity_header_view_text_color
+                        R.color.isl_target_activity_header_view_text_color
                 )
         );
         setSingleLine(true);
         setEllipsize(TextUtils.TruncateAt.END);
-        int padding = resources.getDimensionPixelSize(R.dimen.default_padding);
+        int padding = resources.getDimensionPixelSize(R.dimen.isl_default_padding);
         setPadding(padding, padding, padding, padding);
     }
 }

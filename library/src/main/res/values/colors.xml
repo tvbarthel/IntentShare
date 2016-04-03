@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="target_activity_view_label">#212121</color>
-    <color name="target_activity_view_background">@android:color/white</color>
-    <color name="target_activity_header_view_background">@android:color/white</color>
-    <color name="target_activity_header_view_text_color">#767676</color>
-    <color name="activity_translucent_background">#88000000</color>
+    <color name="isl_target_activity_view_label">#212121</color>
+    <color name="isl_target_activity_view_background">@android:color/white</color>
+    <color name="isl_target_activity_header_view_background">@android:color/white</color>
+    <color name="isl_target_activity_header_view_text_color">#767676</color>
+    <color name="isl_activity_translucent_background">#88000000</color>
 </resources>

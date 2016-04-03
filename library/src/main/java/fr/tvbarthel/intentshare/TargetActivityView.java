@@ -110,13 +110,13 @@ class TargetActivityView extends FrameLayout {
      * @param context holding context.
      */
     private void initialize(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.target_activity_view, this);
+        LayoutInflater.from(context).inflate(R.layout.isl_target_activity_view, this);
 
         Resources resources = context.getResources();
 
-        height = resources.getDimensionPixelSize(R.dimen.target_activity_view_height);
+        height = resources.getDimensionPixelSize(R.dimen.isl_target_activity_view_height);
 
-        int padding = resources.getDimensionPixelSize(R.dimen.default_padding);
+        int padding = resources.getDimensionPixelSize(R.dimen.isl_default_padding);
         setPadding(padding, padding, padding, padding);
 
         setForeground(
@@ -129,7 +129,7 @@ class TargetActivityView extends FrameLayout {
         setBackgroundColor(
                 ContextCompat.getColor(
                         context,
-                        R.color.target_activity_view_background
+                        R.color.isl_target_activity_view_background
                 )
         );
 

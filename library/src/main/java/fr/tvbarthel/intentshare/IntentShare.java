@@ -99,7 +99,7 @@ public final class IntentShare implements Parcelable {
         packageWithExtraProvider = new ArrayList<>();
         this.listener = null;
         this.iconLoader = new AsyncIconLoader();
-        this.chooserTitle = context.getString(R.string.default_sharing_label);
+        this.chooserTitle = context.getString(R.string.isl_default_sharing_label);
     }
 
     /**
