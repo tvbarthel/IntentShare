@@ -9,7 +9,8 @@
         android:id="@+id/activity_target_chooser_recycler_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:overScrollMode="never" />
 
     <fr.tvbarthel.intentshare.TargetActivityHeaderView
         android:id="@+id/activity_chooser_sticky_title"
