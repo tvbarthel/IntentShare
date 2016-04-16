@@ -21,20 +21,20 @@ class TargetActivityView extends FrameLayout {
     private OnClickListener mInternalClickListener;
     private Listener listener;
     private int height;
-    private IconLoader loader;
+    private IconLoader asyncIconLoader;
 
     /**
      * Simple view used to display a {@link TargetActivity}.
      *
-     * @param context holding context.
-     * @param loader  loader used to load {@link TargetActivity} icon.
+     * @param context         holding context.
+     * @param asyncIconLoader loader used to load {@link TargetActivity} icon.
      */
-    public TargetActivityView(Context context, IconLoader loader) {
+    public TargetActivityView(Context context, IconLoader asyncIconLoader) {
         super(context);
         if (!isInEditMode()) {
             initialize(context);
         }
-        this.loader = loader;
+        this.asyncIconLoader = asyncIconLoader;
     }
 
     /**
@@ -69,6 +69,12 @@ class TargetActivityView extends FrameLayout {
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        asyncIconLoader.cancel(icon);
+    }
+
     /**
      * Set the view model.
      *
@@ -76,23 +82,7 @@ class TargetActivityView extends FrameLayout {
      */
     public void setModel(TargetActivity model) {
         this.model = model;
-        if (this.model != null) {
-            label.setText(model.getActivityLabel());
-        }
-    }
-
-    /**
-     * Load the target activity icon.
-     */
-    public void loadIcon() {
-        loader.load(model.getIconUri(), icon);
-    }
-
-    /**
-     * Cancel the loading of the target activity icon.
-     */
-    public void cancelIconLoading() {
-        loader.cancel(icon);
+        label.setText(model.getLabel());
     }
 
     /**
@@ -102,6 +92,21 @@ class TargetActivityView extends FrameLayout {
      */
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    /**
+     * Load the target activity icon.
+     */
+    public void loadIcon() {
+        icon.setImageDrawable(null);
+        asyncIconLoader.load(model.getIconUri(), icon);
+    }
+
+    /**
+     * Cancel the loading of the target activity icon.
+     */
+    public void cancelIconLoading() {
+        asyncIconLoader.cancel(icon);
     }
 
     /**
@@ -145,6 +150,7 @@ class TargetActivityView extends FrameLayout {
             }
         };
         setOnClickListener(mInternalClickListener);
+
     }
 
     /**
@@ -159,5 +165,4 @@ class TargetActivityView extends FrameLayout {
          */
         void onTargetActivitySelected(TargetActivity targetActivity);
     }
-
 }

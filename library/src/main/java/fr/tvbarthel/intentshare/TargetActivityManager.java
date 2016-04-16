@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +35,7 @@ class TargetActivityManager {
     /**
      * List of target activities.
      */
-    private List<TargetActivity> targetActivities;
+    private ArrayList<TargetActivity> targetActivities;
 
     /**
      * Shared preferences used to store target activities scores.
@@ -53,9 +55,10 @@ class TargetActivityManager {
      * Basically, resolve the list of {@link android.app.Activity} which can handled
      * {@link Intent#ACTION_SEND}.
      *
-     * @param context context used to resolves target activities.
+     * @param context  context used to resolves target activities.
+     * @param listener listener used to catch resolving events.
      */
-    public void resolveTargetActivities(Context context) {
+    public void resolveTargetActivities(Context context, ResolveListener listener) {
         targetActivities.clear();
 
         sharedPreferences = context.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
@@ -82,32 +85,23 @@ class TargetActivityManager {
 
                 long lastSelection = sharedPreferences.getLong(lastSelectionKey, 0);
 
-                targetActivities.add(
-                        new TargetActivity(
-                                context,
-                                targetActivityInfo,
-                                lastSelection
-                        )
-                );
+                TargetActivity targetActivity
+                        = new TargetActivity(context, targetActivityInfo, lastSelection);
+                targetActivities.add(targetActivity);
             }
         }
 
         Collections.sort(targetActivities, new TargetActivity.RecencyComparator());
+
+        for (int i = 0; i < targetActivities.size(); i++) {
+            new AsyncLabelLoader(context, targetActivities.get(i), listener).execute();
+        }
+
+        listener.onTargetActivitiesResolved(targetActivities);
     }
 
     private String getLastSelectionKey(String packageName, String activityName) {
         return String.format(KEY_LAST_SELECTION, packageName, activityName);
-    }
-
-    /**
-     * Retrieve the list of target activities for sharing content.
-     * <p/>
-     * See also : {@link TargetActivityManager#resolveTargetActivities(Context)}
-     *
-     * @return list of target activities. Empty list if target activities aren't resolved.
-     */
-    public List<TargetActivity> getTargetActivities() {
-        return targetActivities;
     }
 
     /**
@@ -213,6 +207,69 @@ class TargetActivityManager {
             intent.putExtra(Intent.EXTRA_STREAM, imageUri);
             intent.setType("image/jpeg");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+    }
+
+    /**
+     * Listener used to catch resolve events.
+     */
+    public interface ResolveListener {
+
+        /**
+         * Called when the target activities has been resolved.
+         * <p/>
+         * Note that, since resolving target activities name can take a little more time,
+         * {@link ResolveListener#onLabelResolved(TargetActivity)}
+         * will be called once a label has been successfully loaded.
+         *
+         * @param targetActivities list of resolved target activities.
+         */
+        void onTargetActivitiesResolved(@NonNull ArrayList<TargetActivity> targetActivities);
+
+        /**
+         * Called when the label of a target activity has been resolved.
+         *
+         * @param targetActivity target for which the label has been resolved.
+         */
+        void onLabelResolved(@NonNull TargetActivity targetActivity);
+
+    }
+
+    /**
+     * Async task used to avoid loading the target activity label on the ui thread.
+     */
+    private static final class AsyncLabelLoader extends AsyncTask<Void, Void, CharSequence> {
+
+        private final PackageManager packageManager;
+        private final TargetActivity targetActivity;
+        private final ResolveListener listener;
+
+        /**
+         * Async task used to avoid loading the target activity label on the ui thread.
+         *
+         * @param context        context used to access to the package manager.
+         * @param targetActivity target activity for which the label should be loaded.
+         * @param listener       to notify once the label has been loaded.
+         */
+        public AsyncLabelLoader(
+                @NonNull Context context,
+                @NonNull TargetActivity targetActivity,
+                @NonNull ResolveListener listener) {
+            packageManager = context.getPackageManager();
+            this.targetActivity = targetActivity;
+            this.listener = listener;
+        }
+
+        @Override
+        protected CharSequence doInBackground(Void... params) {
+            return targetActivity.getResolveInfo().loadLabel(packageManager);
+        }
+
+        @Override
+        protected void onPostExecute(CharSequence s) {
+            super.onPostExecute(s);
+            targetActivity.setLabel(s);
+            listener.onLabelResolved(targetActivity);
         }
     }
 

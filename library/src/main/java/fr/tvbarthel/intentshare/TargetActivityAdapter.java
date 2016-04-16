@@ -131,6 +131,18 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
     }
 
     /**
+     * Used to notify that a target activity changed.
+     *
+     * @param targetActivity target activity which have changed.
+     */
+    public void notifyTargetActivityChanged(TargetActivity targetActivity) {
+        int in = targetActivities.indexOf(targetActivity);
+        if (in != -1) {
+            notifyItemChanged(in + 1); // header
+        }
+    }
+
+    /**
      * View holder pattern.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
