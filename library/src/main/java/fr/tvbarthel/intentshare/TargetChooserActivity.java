@@ -6,17 +6,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Simple activity used to allow the user to choose a target activity for the sharing intent.
  */
 public class TargetChooserActivity extends AppCompatActivity
-        implements TargetActivityAdapter.Listener, View.OnClickListener {
+        implements TargetActivityAdapter.Listener, View.OnClickListener, TargetActivityManager.ResolveListener {
 
     /**
      * Extra key used to pass param to the activity.
@@ -89,6 +93,7 @@ public class TargetChooserActivity extends AppCompatActivity
      */
     private int currentRecyclerScrollY;
     private View rootView;
+    private List<TargetActivity> targetActivities;
 
     /**
      * Simple activity used to allow the user to choose a target activity for the sharing intent.
@@ -126,9 +131,7 @@ public class TargetChooserActivity extends AppCompatActivity
         stickyTitle = ((TargetActivityHeaderView) findViewById(R.id.activity_chooser_sticky_title));
         stickyShadow = findViewById(R.id.activity_chooser_sticky_title_shadow);
 
-        targetActivityManager = new TargetActivityManager();
-        targetActivityManager.resolveTargetActivities(this);
-
+        targetActivities = new ArrayList<>();
         selectedTargetActivity = null;
         listenerNotified = false;
 
@@ -136,6 +139,9 @@ public class TargetChooserActivity extends AppCompatActivity
 
         setUpRecyclerView(savedInstanceState);
         setUpStickyTitle();
+
+        targetActivityManager = new TargetActivityManager();
+        targetActivityManager.resolveTargetActivities(this, this);
     }
 
     @Override
@@ -174,10 +180,21 @@ public class TargetChooserActivity extends AppCompatActivity
     }
 
     @Override
-    public void onTargetActivitySelected(TargetActivity targetActivity) {
+    public void onTargetActivitiesResolved(@NonNull ArrayList<TargetActivity> targetActivities) {
+        this.targetActivities.addAll(targetActivities);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onTargetActivitySelected(@NonNull TargetActivity targetActivity) {
         selectedTargetActivity = targetActivity;
         targetActivityManager.startTargetActivity(this, targetActivity, intentShare);
         finish();
+    }
+
+    @Override
+    public void onLabelResolved(TargetActivity targetActivity) {
+        adapter.notifyTargetActivityChanged(targetActivity);
     }
 
 
@@ -189,8 +206,9 @@ public class TargetChooserActivity extends AppCompatActivity
                         false
                 )
         );
+        targetActivities = new ArrayList<>();
         adapter = new TargetActivityAdapter(
-                targetActivityManager.getTargetActivities(),
+                targetActivities,
                 intentShare.chooserTitle,
                 intentShare.iconLoader
         );
@@ -204,7 +222,7 @@ public class TargetChooserActivity extends AppCompatActivity
                     public boolean onPreDraw() {
                         recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
                         int totalHeight = adapter.getItemCount() * targetActivityViewHeight;
-                        int maxStartingHeight = (int) (recyclerView.getHeight() / 3f);
+                        int maxStartingHeight = (int) (recyclerView.getHeight() / 2.5f);
                         int startingHeight = Math.min(totalHeight, maxStartingHeight);
                         recyclerPaddingTop = recyclerView.getHeight() - startingHeight;
                         recyclerView.setPadding(0, recyclerPaddingTop, 0, 0);
