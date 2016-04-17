@@ -69,12 +69,6 @@ class TargetActivityView extends FrameLayout {
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        asyncIconLoader.cancel(icon);
-    }
-
     /**
      * Set the view model.
      *
