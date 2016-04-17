@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.widget.ImageView;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,16 +37,7 @@ class AsyncIconLoader implements IconLoader {
     };
 
     private SparseArray<AsyncIconLoaderTask> task;
-
-
-    /**
-     * Icon loader based on an {@link AsyncTask}
-     * <p/>
-     * No cashing is performed for decoded {@link Bitmap}.
-     */
-    public AsyncIconLoader() {
-        task = new SparseArray<>();
-    }
+    private HashMap<Uri, Bitmap> cachedIcons;
 
     /**
      * Icon loader based on an {@link AsyncTask}
@@ -56,6 +48,16 @@ class AsyncIconLoader implements IconLoader {
      */
     protected AsyncIconLoader(Parcel in) {
         this();
+    }
+
+    /**
+     * Icon loader based on an {@link AsyncTask}
+     * <p/>
+     * No cashing is performed for decoded {@link Bitmap}.
+     */
+    public AsyncIconLoader() {
+        task = new SparseArray<>();
+        cachedIcons = new HashMap<>();
     }
 
     @Override
@@ -69,9 +71,15 @@ class AsyncIconLoader implements IconLoader {
 
     @Override
     public void load(Uri iconUri, ImageView imageView) {
-        AsyncIconLoaderTask asyncIconLoaderTask = new AsyncIconLoaderTask(iconUri, imageView);
-        task.put(imageView.hashCode(), asyncIconLoaderTask);
-        asyncIconLoaderTask.execute();
+        Bitmap bitmap = cachedIcons.get(iconUri);
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+        } else {
+            AsyncIconLoaderTask asyncIconLoaderTask
+                    = new AsyncIconLoaderTask(iconUri, imageView, cachedIcons);
+            task.put(imageView.hashCode(), asyncIconLoaderTask);
+            asyncIconLoaderTask.execute();
+        }
     }
 
     @Override
@@ -94,17 +102,21 @@ class AsyncIconLoader implements IconLoader {
         private final ImageView imageTarget;
         private final PackageManager packageManager;
         private final String targetPackage;
+        private final HashMap<Uri, Bitmap> cachedIcons;
+        private final Uri uri;
         private int iconResId;
         private int targetSize;
 
         /**
          * {@link AsyncTask} used to load an icon off the ui thread.
          *
-         * @param uri       uri of the icon to load.
-         * @param imageView image view in which the icon should be loaded.
+         * @param uri         uri of the icon to load.
+         * @param imageView   image view in which the icon should be loaded.
+         * @param cachedIcons list of bitmap to which the new decoded one will be added.
          */
-        public AsyncIconLoaderTask(Uri uri, ImageView imageView) {
+        public AsyncIconLoaderTask(Uri uri, ImageView imageView, HashMap<Uri, Bitmap> cachedIcons) {
             packageManager = imageView.getContext().getPackageManager();
+            this.uri = uri;
             targetPackage = uri.getAuthority();
             iconResId = 0;
 
@@ -122,6 +134,7 @@ class AsyncIconLoader implements IconLoader {
             imageTarget = imageView;
             targetSize = imageView.getContext().getResources()
                     .getDimensionPixelSize(R.dimen.isl_target_activity_view_icon_size);
+            this.cachedIcons = cachedIcons;
         }
 
         @Override
@@ -162,6 +175,9 @@ class AsyncIconLoader implements IconLoader {
             super.onPostExecute(bitmap);
             if (bitmap != null) {
                 imageTarget.setImageBitmap(bitmap);
+                cachedIcons.put(uri, bitmap);
+            } else {
+                Log.e(TAG, "Failed to load icon from uri : " + uri);
             }
         }
 
