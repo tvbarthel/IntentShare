@@ -1,0 +1,685 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>    
+    <script src="./bower_components/webcomponentsjs/webcomponents.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
+    <link rel="import" href="./bower_components/core-header-panel/core-header-panel.html">
+    <link rel="import" href="./bower_components/core-toolbar/core-toolbar.html">
+    <link rel="import" href="./bower_components/paper-shadow/paper-shadow.html">
+    <link rel="import" href="./bower_components/paper-ripple/paper-ripple.html">
+    <link rel="import" href="./bower_components/paper-button/paper-button.html">
+    <link rel="import" href="./bower_components/paper-fab/paper-fab.html">
+    <link rel="import" href="./bower_components/paper-dialog/paper-action-dialog.html">
+    <link rel="import" href="./bower_components/core-icons/core-icons.html" >
+
+  
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+			font-size: 21px;
+        }
+		
+		a {
+			color: black;
+		}
+		
+		h1 {
+			font-size: 1.5em;
+		}
+        
+        h1, h2, h3, h4, h5 {
+            color: #7c86ce;
+        }
+		
+		h4, h5 {
+			padding-left: 3%;
+			padding-right: 3%;
+		}
+		
+		p{
+			padding-left: 3%;
+			padding-right: 3%;
+			text-align: justify;
+			text-justify: inter-word;
+		}
+
+		pre {
+		  width: 80%;
+		  margin : auto;
+		  padding: 3%;
+		  box-shadow: 0 0 10px rgba(0,0,0,.1);
+		  overflow: auto;
+		  
+		  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+		  font-size: 14px;
+
+		  border-radius: 2px;
+		  -moz-border-radius: 2px;
+		  -webkit-border-radius: 2px;
+		}
+        
+        core-header-panel {
+            background: #efecf7;
+        }
+        
+        core-toolbar {
+            background-color: #5a69c6;
+        }
+        
+        #ic-header {            
+            height: 85px;
+            display: block;
+            margin: 0 auto;
+            padding-top: 100px;
+        }
+        
+        .card {
+            margin: 0 auto;
+            padding: 16px;
+            border-radius: 4px;
+            background-color: white;
+            max-width: 65%;
+			min-width: 800px;
+        }
+        
+        .content {
+            margin: 160px 0px 60px 0;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+		
+		li {
+			margin-left: 4%;
+		}
+        
+        paper-ripple {
+            color: #5a69c6;
+        }
+        paper-fab  {
+            background: #5a69c6;
+			min-width: 50px;
+			min-height: 50px;
+        }
+        
+        .screenshot {
+            width: 200px;
+            height: 340px;
+            display: inline-block;
+            position: relative;
+            background-repeat: no-repeat;
+            background-size: 200px 340px;
+        }
+		
+		.fullWidthImage {
+            width:100%;
+            display: inline-block;
+        }
+		
+		.imageContainer {
+			text-align: center;
+			padding-top: 30px;
+			padding-bottom: 30px;
+		}
+        
+        #image-1 {
+            background-image: url("resources/implicit_intent.png");
+			width:400px;
+			height:250px;
+            display: inline-block;
+			position: relative;
+            background-repeat: no-repeat;
+            background-size: 400px 250px;
+        }
+		
+		#image-2 {
+            background-image: url("resources/current_tools.png");
+			width:800px;
+			height:450px;
+            display: inline-block;
+			position: relative;
+            background-repeat: no-repeat;
+            background-size: 800px 450px;
+        }
+		
+		#image-3 {
+            background-image: url("resources/same_extras.png");
+			width:600px;
+			height:1072px;
+            display: inline-block;
+			position: relative;
+            background-repeat: no-repeat;
+            background-size: 600px 1072px;
+        }
+		
+		#image-4 {
+            background-image: url("resources/differents_extras.png");
+			width:600px;
+			height:1072px;
+            display: inline-block;
+			position: relative;
+            background-repeat: no-repeat;
+            background-size: 600px 1072px;
+        }
+		
+		#image-5 {
+            background-image: url("resources/same_listing.png");
+			width:600px;
+			height:535px;
+            display: inline-block;
+			position: relative;
+            background-repeat: no-repeat;
+            background-size: 600px 535px;
+        }
+		
+		#image-6 {
+            background-image: url("resources/different_listing.png");
+			width:600px;
+			height:535px;
+            display: inline-block;
+			position: relative;
+            background-repeat: no-repeat;
+            background-size: 600px 535px;
+        }
+        
+        #screenshot-2 {
+            background-image: url("resources/Screenshot_2015-05-17-17-30-42_framed_thumbnail.png");
+        }
+        
+        #screenshot-3 {
+            background-image: url("resources/Screenshot_2015-05-17-17-31-11_framed_thumbnail.png");
+        }
+        
+        #screenshot-4 {
+            background-image: url("resources/Screenshot_2015-05-17-17-04-27_framed_thumbnail.png");
+        }
+        
+    </style>  
+  
+  </head>
+  
+    <body fullbleed vertical layout unresolved>    
+    
+        <core-header-panel mode="cover" flex>
+
+            <core-toolbar class="tall" id="mainheader" end>                
+                <img id="ic-header" src="resources/ic_header.png" />                
+            </core-toolbar>
+            
+            <div class="content">
+
+                <paper-shadow class="card" z="2">
+                
+                    <a href="https://github.com/tvbarthel/IntentShare"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+					 <img class="fullWidthImage" src="resources/store_banner.png" alt="IntentShare banner"/>
+                    <p>
+                        IntentShare is a light open-source library that improves the sharing experience on Android applications.
+                    </p>   
+					
+					<h1>TL;DR</h1>
+						<p>
+							Nowadays, sharing content is part of our daily life. Unfortunately, the Android framework tools do not provide a sharing experience which reaches all of our expectations. 
+							We decided to implement our own tool, IntentShare, that might improve the user experience of a sharing action by:
+							<ul>
+								<li>providing different extras according to the chosen target activity in order to take advantages of each target's specificities.</li>
+								<li>providing an easy way to track the selected target activities in order to improve/adapt the extras for a specific target.</li>
+								<li>providing a sorted target activity list based on the context of your app in order to take advantages of how people use it.</li>
+							</ul>
+						</p>
+						
+					</br>
+					<h1>Summary</h1>
+					<ul>
+					
+						<li><a href="#gradle">Gradle dependency</a></li>
+						<li><a href="#usage">Simple usage</a></li>
+						<li><a href="#motivation">Motivations</a></li>
+							<ul>
+								<li><a href="#extras">We want specific extras according to the target activity</a></li>
+								<li><a href="#listener">We want to track selected target activity</a></li>
+								<li><a href="#sorting">We want to sort target activities</a></li>
+							</ul>
+					</ul>
+					
+					</br>
+					<h2 id="gradle">Gradle dependency</h2>
+					<p>
+						Promoted on Maven Central :
+					</p>
+					<pre>
+compile 'fr.tvbarthel.intentshare:library:0.0.1'
+					</pre>
+					
+					<h2 id="usage">Simple usage</h2>
+					<pre>
+  IntentShare.with(MainActivity.this)
+                .chooserTitle("Select a sharing target : ")
+                .text("Default text you would like to share.")
+                .mailBody("Extended text you would like to share in mail body.")
+                .mailSubject("Mail subject.")
+                .facebookBody(Uri.parse("http://tvbarthel.fr"))
+                .twitterBody("Tweet can only have 127 char!")
+                .deliver();
+					</pre>
+					</br>
+					<p>
+						Advanced usage, custom ExtraProvider and Listener documentation <a href="https://github.com/tvbarthel/IntentShare">here</a>.
+					</p>
+						
+                    </br>
+                    <h1 id="motivation">Motivations</h1>
+                    <p>
+						Implicit intents are a very powerful feature of Android. They allow a component to delegate an operation to any other components
+						register as able to handle it. Every intents are composed of an action and optional extras. Unlike explicit intents, an implicit intent 
+						doesn’t know in advance which component is going to received it. Extras part must respect a contract shared
+						by every emitting and target components. The responsibility of extracting the extras and adapting them correctly to provide the expecting 
+						behaviour is let to the target component.
+                    <p/>
+
+					<div class="imageContainer">
+						<div id="image-1">
+								<a href="resources/implicit_intent.png" fit>
+									<paper-ripple class="recenteringTouch" fit></paper-ripple>
+								</a>
+						</div>
+					 </div>   
+					 
+					 <p>
+						If every developers can create their own actions and define the contract of the extras part, 
+						Android provides a range of actions/extras contracts covering most of the common operations we would like to delegate.
+						One of these provided actions is 
+						<a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_SEND">Intent.ACTION_SEND</a>. 
+						</br>
+						</br>
+						As described in <a href="http://developer.android.com/training/sharing/send.html">the official documentation</a>, 
+						<a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_SEND">ACTION_SEND</a> 
+						 sends simple data to other activities. It is widely used to share content such as articles, videos, musics, and pictures across applications.
+					 </p>
+					
+					 <p>
+						 As sharing is a very common operation in our daily life, Android framework provides tools in order to help developers emitting and receiving 
+						 <a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_SEND">ACTION_SEND</a>  intent.
+						 For instance <a href="http://developer.android.com/reference/android/support/v4/app/ShareCompat.html">ShareCompat</a>
+						 will help us to handle the extras part while 
+						 <a href="http://developer.android.com/reference/android/content/Intent.html#createChooser(android.content.Intent, java.lang.CharSequence)">Intent.createChooser</a>
+						 will help us to provide more context by changing the label displayed when a target activity must be chosen by the user.
+					 </p>
+					 
+					 <div class="imageContainer">
+						<div id="image-2">
+								<a href="resources/current_tools.png" fit>
+									<paper-ripple class="recenteringTouch" fit></paper-ripple>
+								</a>
+						</div>
+					 </div> 
+					 
+					 <h4> But are this tools enough to fulfil the nowadays usages and expectations? </h4>
+					 
+					 <p> 
+						Unfortunately not, at least not from our point of view. Let’s see the gap between current tools and nowadays sharing expectations which motivated us to implement IntentShare.
+					 </p>
+					 
+					 </br>
+					 <h2 id="extras">We want specific extras according to the target activity</h2>
+					 
+					 <p>
+						Sharing content is a perfect example to understand the power of implicit intents: the emitting application knows nothing about the applications 
+						that can receive the intent, and the applications that will receive the intent knows nothing about the emitting application, and yet they exchange data.
+						They both fulfil a contract and Android brings the magic. However, sharing intent highlight a limitation of implicit intents : for a given
+						intent, extras are the same for every target activities.
+					 </p>
+
+					</br>
+					<h3> Why same extras for every target applications could be a limitation for a sharing operation? </h3>
+					
+					<h4> The way of consuming contents change according to the target applications.</h4>
+					
+					<p> 
+						As mentioned above, adapting extras to provide the expecting behaviour is let to the target component. For instance, Gmail will use Intent.EXTRA_TEXT to fill the mail body 
+						while Twitter will used the same text to compose a tweet. But the usage and the context of both apps are quite different. In fact the way users consumes content changes 
+						according to the context of the app. 
+					</p>
+					
+					<p>
+						Let’s take the example of a news app from which you could share contents. In a social app such as Twitter, severals contents are displayed at the same time inside a list. 
+						Shared news must catch users' attentions in order to invite them to read more. That’s why a short headline with a picture as well as some hashtags are commonly
+						used to display a small preview of the news inside a tweet. On the contrary, a news shared by mail is directly send to a friend by a friend. Content is already targeted, 
+						no needs of additional attractive elements. However people are used to take advantage of the offline access feature of email app and may expect to read the full article directly 
+						from their mail client.
+					</p>
+					
+					<p>
+						Therefore, you might want to provide different data for the same intent based on the target activity.
+						</br>
+						For instance : 
+					</p>
+					
+					<h5> Twitter data : </h5>
+					<pre>
+sendIntent.putExtra(
+	Intent.EXTRA_TEXT, 
+	"Random Musings on the N Developer Preview by @CommonsWare http://ift.tt/1R8d4AP #AndroidDev”
+);
+					</pre>
+					
+					<h5> Mail data : </h5>
+					<pre>
+
+sendIntent.putExtra(
+	Intent.EXTRA_SUBJECT, 
+	"Random Musings on the N Developer Preview by CommonsWare”
+);
+
+// the whole article
+sendIntent.putExtra(
+	Intent.EXTRA_TEXT, 
+	“Each time Google releases a new developer preview, I rummage through the API differences report and the high-level overviews,"
+	+ "to see if there are things that warrant more attention from developers, with an emphasis on mainstream features that any"
+	+ "developer might reasonably use..."
+	+ "...I’ll be starting to cover the N Developer Preview in the next book update, due out later this month.”
+); 
+					</pre>
+					
+					</br>
+					<h4> Unfortunately, implicit intents cannot provide this behaviour since the extra part is the same for every target components.</h4>
+					
+					</br>
+					<h4> Target applications could break the data contract. </h4>
+					
+					<p>
+						In addition to the previous example, another use case can reinforce the need of providing different extras according to the target app :
+						 every target applications don’t respect the extras contract of the 
+						 <a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_SEND">ACTION_SEND</a>.
+					</p>
+
+
+					<p>
+						In fact, as explained above, every applications can declare themselves as able to handle 
+						<a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_SEND">ACTION_SEND</a>. Unfortunately, even if they are registered as target components,
+						they won’t necessarily respect the extras contract.
+					</p>
+ 
+					<p>
+						Facebook app is the most known target app for sharing that does not respect the extras contract of the 
+						<a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_SEND">ACTION_SEND</a>. 
+						<a href="http://developer.android.com/reference/android/content/Intent.html#EXTRA_TEXT">EXTRA_TEXT</a>
+						will be taken into account by the Facebook app only if it’s an html link. Therefore, when sharing a news on Facebook, 
+						only the link of the article could be used while the full text could be shared by mail and only a short preview (headline, picture and hashtags) could be posted on twitter.
+					</p>
+					
+					<p>
+						Different extras might be used for a given target application that does not respect the common extras contract in order to not affect other target applications.
+					</p>
+
+					</br>
+					
+					<h4>
+						These two examples highlight the first motivation for designing a new tool for sharing action : 
+						having the same content for every target applications does not provide the best experience to the users anymore.
+					</h4>
+
+
+					<div class="imageContainer">
+						<div id="image-3">
+								<a href="resources/same_extras.png" fit>
+									<paper-ripple class="recenteringTouch" fit></paper-ripple>
+								</a>
+						</div>
+						<div id="image-4">
+								<a href="resources/differents_extras.png" fit>
+									<paper-ripple class="recenteringTouch" fit></paper-ripple>
+								</a>
+						</div>
+					 </div> 
+					 
+					 </br>
+					 <h2 id="listener">We want to track selected target activity</h2>
+					 
+					<p>
+					 In order to provide the best sharing experience as possible, developers have to know how people are using the sharing feature in order to adapt and improve the shared content.
+					</p>
+
+					<p>
+						Let’s go back to our example of a news application. If you could identify that most of your users are sharing articles through mails, you might want to take the time to improve
+						the mail sharing experience. 
+						
+						 For instance, as the mail body does not have a character limit, you could add some related articles headlines and some links at its end: people would have access to more
+						 contents linked to what they just read.
+						
+						On the contrary, if users prefer to share your contents on Twitter, you might want to provide 
+						twitter account to the redactors of your team in order to @ them directly inside the sharing tweet. Thus, users could be able to follow redactors and discover more articles through
+						their twitter accounts. 
+					</p>
+					
+					<p>
+
+						These two examples illustrate the need of tracking the chosen target activities in order to improve the sharing experience. 
+						Unfortunately, with the current tools of the Android  framework,  this feature is only accessible from API 22 thanks to 
+						<a href="http://developer.android.com/reference/android/content/Intent.html#createChooser(android.content.Intent, java.lang.CharSequence, android.content.IntentSender)"> 
+						Intent.createChooser(CharSequence, IntentSender)</a>. 
+						<h4>This lack of tracking target activities pre 22 was our second motivation for designing a new sharing tool since still 78.5% of devices are pre 22.</h4>
+						</p>
+						
+					<p>
+						(<a href="http://developer.android.com/about/dashboards/index.html">Android dashboard</a>, Data collected during a 7-day period ending on 7 March 2016).
+					</p>
+					
+					</br>
+					<h2 id="sorting">We want to sort target activities</h2>
+					
+					<p>
+						Sharing content is now part of our daily life. More and more apps register themselves to handle the ACTION_SEND.
+						On an average phone, when an Intent with the 
+						<a href="http://developer.android.com/reference/android/content/Intent.html#ACTION_SEND">ACTION_SEND</a>
+						is fired, a list of 10 or more target activities is shown to the user. In order to provide the best sharing experience,
+						this list should be sorted from the most likely to be chosen by the user to the less likely to be selected.
+					</p>
+					
+					<h3> How current tools sort the target activities</h3>
+					
+					<p>
+						When we started to design this sharing tools, our first thought regarding the listing of target activities was to replicate the native behaviour.
+						Unfortunately, what we discovered didn’t reach our expectation.
+					</p>
+					
+					<p>
+						The native component used by 
+						<a href="http://developer.android.com/reference/android/content/Intent.html#createChooser(android.content.Intent, java.lang.CharSequence)">Intent.createChooser</a> 
+						to display the list of target activities is an activity called : 
+						<i>ChooserActivity.java</i> which extends <i>ResolverActivity.java</i>.
+					</p>
+					
+					<pre>
+public class ChooserActivity extends ResolverActivity {...}
+
+/**
+
+* This activity is displayed when the system attempts to start an Intent for
+* which there is more than one matching activity, allowing the user to decide
+* which to go to.  It is not normally used directly by application developers.
+*/
+
+public class ResolverActivity extends AlertActivity implements AdapterView.OnItemClickListener {...}
+					</pre>
+					
+					<h5>Pre API 21</h5>				
+					<p>
+						Target activities are simply sorted in the 
+						<a href="http://androidxref.com/4.4.4_r1/xref/frameworks/base/core/java/com/android/internal/app/ResolverActivity.java">ResolverActivity</a>
+						according to their name thanks to : 
+						<a href="http://androidxref.com/4.4.4_r1/xref/frameworks/base/core/java/com/android/internal/app/ResolverActivity.java#539">ResolveInfo.DisplayNameComparator</a>.
+					</p>
+					
+					<p>
+						The list won’t be adapted to the user needs. For instance, people using twitter to share content will always have to scroll to the bottom
+						of the list when they could have selected the first one if the most used app for sharing have been identified.
+					</p>
+					
+					<h5>From API 21</h5>
+					<p>
+						Target activities start to be sorted in the ResolverActivity by their 
+						<a href="http://developer.android.com/reference/android/app/usage/UsageStats.html#getTotalTimeInForeground()">total time in foreground</a>
+						thanks to 
+						<a href="http://developer.android.com/reference/android/app/usage/UsageStatsManager.html">UsageStatsManager</a>
+						used by 
+						<a href="http://androidxref.com/5.0.0_r2/xref/frameworks/base/core/java/com/android/internal/app/ResolverActivity.java#1052">
+						ResolverActivity.ResolverComparator</a>.
+					</p>
+					
+					<p>
+						As fallback, each target activities which don’t have any totalTimeInForeground value are sorted by their name such as pre 21.
+					</p>
+
+					<p>
+						This approach seduces us at the begging. In fact, people are more likely to shared content via the app they use the most. 
+						Unfortunately, the usage api requires the android.permission.PACKAGE_USAGE_STATS permission : a system-level permission as explain in the official documentation. 
+					</p>
+					
+					<pre>
+This API requires the permission android.permission.PACKAGE_USAGE_STATS,
+which is a system-level permission and will not be granted to third-party apps. 
+However, declaring the permission implies intention to use the API and the user
+of the device can grant permission through the Settings application.
+					</pre>
+					
+					<p>
+						Therefore, we couldn’t consider using the usage API for our sharing tools.
+					</p>
+					
+					<h5>Since API 23</h5>
+					<p>
+						The ResolverComparator starts to used additional data from the usage API in order to  improve the accuracy of the sorting by taking into 
+						account 
+						<a href="http://androidxref.com/6.0.1_r10/xref/frameworks/base/core/java/com/android/internal/app/ResolverComparator.java#135">recentness or launch count for instance</a>. 
+						In fact, total time in foreground isn’t necesseraly the best way to identify target activities 
+						which are more likely to be chosen by the user. 
+					</p>
+					<p>
+						Even if this new way to evaluate a score for each target activities seduced us even more, it marked definitively the end of our 
+						intention to reproduce the native behaviour since it was based on hidden attributes such as 
+						<a href="http://androidxref.com/6.0.1_r10/xref/frameworks/base/core/java/android/app/usage/UsageStats.java#68">launchCount</a>.
+					</p>
+					
+					<p>
+						Therefore, we decided not to try to replicate the native behaviour but to provide instead what we thought to be a good alternative.
+					</p>
+
+					<p>
+						As providing the same listing for every emitting applications seems to be hard to tackle without system permission, we started to
+						think about providing a specific list for each emitting apps and the more we thought about it the more we were confident about providing a decent user experience.
+					</p>
+
+					<p>
+						In fact, sharing an article from the androiddev subreddit isn’t the same thing as sharing a meme from 9GAG. 
+						The target activity for a sharing request from 9GAG might not be the same as the one chosen for a sharing request 
+						from the androiddev subreddit. If all of your university buddies are using What’s App, you might use it for sharing the last 
+						meme you just find on 9GAG while you will send more serious stuff from the androiddev subreddit to your colleagues on a Slack channel for instance. 
+					</p>
+					
+					<p>
+						The chosen target activity might be very different according to the content of the emitting one.
+						That’s the reason why we decided to provide a specific sorted list for every emitting applications.
+						Sorting target activities became our third motivation for designing IntentShare 
+						in order to provide what we thought to be a decent sharing experience. Basically, the target activities are going to be sorted by the recentness 
+						of their last usage and by their original position in the queryIntentActivities list as a fallback.
+					</p>
+					
+					<div class="imageContainer">
+						<div id="image-5">
+								<a href="resources/same_listing.png" fit>
+									<paper-ripple class="recenteringTouch" fit></paper-ripple>
+								</a>
+						</div>
+						<div id="image-6">
+								<a href="resources/different_listing.png" fit>
+									<paper-ripple class="recenteringTouch" fit></paper-ripple>
+								</a>
+						</div>
+					 </div> 
+					
+					
+					<h2>Conclusion</h2>
+						<p>
+							Nowadays, sharing content is part of our daily life. Unfortunately, the Android framework tools do not provide a sharing experience which reaches all of our expectations. 
+							We decided to implement our own tool, IntentShare, that might improve the user experience of a sharing action by:
+							<ul>
+								<li>providing different extras according to the chosen target activity in order to take advantages of each target's specificities.</li>
+								<li>providing an easy way to track the selected target activities in order to improve/adapt the extras for a specific target.</li>
+								<li>providing a sorted target activity list based on the context of your app in order to take advantages of how people use it.</li>
+							</ul>
+						</p>							
+                    
+
+					</br>
+					<h2>Share your point of view (= </h2>
+					<div id="disqus_thread"></div>
+						<script type="text/javascript">
+							/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+							var disqus_shortname = 'tvbarthel';
+							var disqus_identifier = 'tvbarthel';
+							var disqus_title = 'tvbarthel intentshare';
+
+							/* * * DON'T EDIT BELOW THIS LINE * * */
+							(function() {
+								var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+								dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+								(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+							})();
+						</script>
+						<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+						<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						  
+					</br>
+                    <h2>License</h2>
+                    <p style="white-space: pre-wrap;">Copyright (C) 2016 tvbarthel
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+<a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+                    </p>
+			</div>
+				
+
+                    
+			</paper-shadow>
+ 
+            </div>                 
+        
+        </core-header-panel>
+        
+        <template is="auto-binding" bind>
+                <paper-fab style="position: absolute; bottom: 72px; right: 72px; border: 0;" src="./resources/ic_action_support.png" on-tap="{{toggleSupportDialog}}"></paper-fab>
+        </template>    
+
+                <paper-action-dialog id="dialog-support" style="max-width: 700px;" heading="Support us" backdrop>
+                    <p>Support free content apps and help us bringing our open-source projets to life! Donate for a shot of caffeine for a whole night of coding, or for a cup of British tea for a coding session on a rainy Sunday afternoon!</p>
+                    
+                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" style="text-align: center;" target="_top">
+                        <input type="hidden" name="cmd" value="_s-xclick">
+                        <input type="hidden" name="hosted_button_id" value="BVNPEARANWLQL">
+                        <input type="image" src="https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                        <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                    </form>
+                    
+                    <div style="margin-top: 45px; text-align:center;">
+                        <a href="https://flattr.com/submit/auto?fid=jn33pg&url=http%3A%2F%2Ftvbarthel.fr%2FIntentShare" target="_blank">
+							<img src="//button.flattr.com/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0">
+						</a>
+                    </div>
+                    
+                    <paper-button dismissive>Cancel</paper-button>
+                </paper-action-dialog>           
+
+        <script>
+            var scope = document.querySelector('template[is=auto-binding]');
+            
+            scope.toggleSupportDialog = function(e) {
+                document.querySelector('#dialog-support').toggle();
+                console.log("coucou");
+            };
+        </script>
+        
+    </body>
+    
+</html>
