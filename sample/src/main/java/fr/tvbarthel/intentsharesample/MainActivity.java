@@ -8,7 +8,7 @@ import android.view.View;
 
 import fr.tvbarthel.intentshare.IntentShare;
 import fr.tvbarthel.intentshare.IntentShareListener;
-import fr.tvbarthel.intentshare.loader.picasso.PicassoIconLoader;
+import fr.tvbarthel.intentshare.loader.glide.GlideIconLoader;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 .disableImage()
                 )
                 .listener(intentShareListener)
-                .iconLoader(new PicassoIconLoader())
+                .iconLoader(new GlideIconLoader())
                 .deliver();
     }
 }
