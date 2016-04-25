@@ -1,8 +1,9 @@
 package fr.tvbarthel.intentshare;
 
-import android.content.Context;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.File;
 import java.text.Collator;
@@ -11,7 +12,22 @@ import java.util.Comparator;
 /**
  * Plain java model for a sharing target activity.
  */
-class TargetActivity {
+class TargetActivity implements Parcelable {
+
+    /**
+     * A {@link android.os.Parcelable.Creator} of {@link TargetActivity}.
+     */
+    public static final Creator<TargetActivity> CREATOR = new Creator<TargetActivity>() {
+        @Override
+        public TargetActivity createFromParcel(Parcel source) {
+            return new TargetActivity(source);
+        }
+
+        @Override
+        public TargetActivity[] newArray(int size) {
+            return new TargetActivity[size];
+        }
+    };
 
     private final int activityLabelResId;
     private final Uri iconUri;
@@ -23,11 +39,10 @@ class TargetActivity {
     /**
      * Plain java model for a sharing target activity.
      *
-     * @param context       context used to load target activity label.
      * @param resolveInfo   {@link ResolveInfo} linked to the target activity.
      * @param lastSelection time stamp in milli of  last selection.
      */
-    public TargetActivity(Context context, ResolveInfo resolveInfo, long lastSelection) {
+    public TargetActivity(ResolveInfo resolveInfo, long lastSelection) {
         this.lastSelection = lastSelection;
         this.resolveInfo = resolveInfo;
 
@@ -44,6 +59,20 @@ class TargetActivity {
 
         this.activityLabelResId = resolveInfo.labelRes;
         this.isMail = resolveInfo.filter.hasDataType("message/rfc822");
+    }
+
+    /**
+     * Create a {@link TargetActivity} from {@link Parcel}.
+     *
+     * @param in the {@link Parcel}
+     */
+    protected TargetActivity(Parcel in) {
+        this.activityLabelResId = in.readInt();
+        this.iconUri = in.readParcelable(Uri.class.getClassLoader());
+        this.isMail = in.readByte() != 0;
+        this.lastSelection = in.readLong();
+        this.resolveInfo = in.readParcelable(ResolveInfo.class.getClassLoader());
+        this.label = in.readString();
     }
 
     @Override
@@ -81,6 +110,21 @@ class TargetActivity {
         result = 31 * result + (int) (lastSelection ^ (lastSelection >>> 32));
         result = 31 * result + resolveInfo.hashCode();
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.activityLabelResId);
+        dest.writeParcelable(this.iconUri, flags);
+        dest.writeByte(isMail ? (byte) 1 : (byte) 0);
+        dest.writeLong(this.lastSelection);
+        dest.writeParcelable(this.resolveInfo, flags);
+        dest.writeString(this.label == null ? null : this.label.toString());
     }
 
     /**
