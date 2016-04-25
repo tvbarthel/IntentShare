@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">IntentShareSample</string>
+    <string name="icon_loader_default">Default IconLoader</string>
+    <string name="icon_loader_picasso">Picasso IconLoader</string>
+    <string name="icon_loader_glide">Glide IconLoader</string>
+
+    <string name="article_title">Improves the sharing experience on Android with IntentShare.</string>
+    <string name="article_url">http://tvbarthel.github.io/IntentShare/</string>
+    <string name="article_headline">"IntentShare is a light open-source library that improves the sharing experience on Android applications.</string>
+    <string name="article">"IntentShare is a light open-source library that improves the sharing experience on Android applications.\n\nNowadays, sharing content is part of our daily life. Unfortunately, the Android framework tools do not provide a sharing experience which reaches all of our expectations. We decided to implement our own tool, IntentShare, that might improve the user experience of a sharing action by:\n\n\t • providing different extras according to the chosen target activity in order to take advantages of each target\'s specificities.\n\n\t • providing an easy way to track the selected target activities in order to improve/adapt the extras for a specific target.\n\n\t • providing a sorted target activity list based on the context of your app in order to take advantages of how people use it.</string>
+    <string name="article_tweet">Improves the sharing experience on Android with IntentShare. http://tvbarthel.github.io/IntentShare/ #android #sharing</string>
+    <string name="learn_more">Learn more</string>
+    <string name="dialog_title">Dialog Title</string>
+    <string name="shared_text">Shared Text</string>
+    <string name="default_dialog_title">Choose a target activity:</string>
+    <string name="default_shared_text">@string/article_headline</string>
+    <string name="fragment_dialog_extra_provider_app_name_hint">App name</string>
+    <string name="fragment_dialog_extra_provider_package_name_hint">com.package.name</string>
+    <string name="fragment_dialog_extra_provider_text_hint">overridden text</string>
+    <string name="fragment_dialog_extra_provider_subject_hint">overridden subject</string>
+    <string name="disable">Disable</string>
+    <string name="override">Override</string>
+    <string name="default_text">Disable text</string>
+    <string name="default_subject">Disable subject</string>
+    <string name="default_image">Disable image</string>
+    <string name="image_override_warning">Overriding shared image not implemented yet in the sample.</string>
+    <string name="add_provider">Add ExtraProvider</string>
+    <string name="build_in_extra_providers">Build-in extra providers</string>
+    <string name="custom_extra_providers">Custom extra providers</string>
+    <string name="facebook_hint">Facebook link</string>
+    <string name="twitter_hint">Tweet</string>
+    <string name="mail_subject_hint">Mail subject</string>
+    <string name="mail_body_hint">Mail body</string>
+    <string name="default_providers">Default provider</string>
 </resources>

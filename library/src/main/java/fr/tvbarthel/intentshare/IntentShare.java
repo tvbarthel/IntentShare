@@ -561,5 +561,68 @@ public final class IntentShare implements Parcelable {
             this.imageDisabled = true;
             return this;
         }
+
+        /**
+         * Get package name of the target activity for which the extra provider has been build.
+         *
+         * @return package name of the target activity for which the extra provider has been build.
+         */
+        public String getPackageName() {
+            return packageName;
+        }
+
+        /**
+         * Retrieve the specific text which is going to override the default one.
+         *
+         * @return the specific text which is going to override the default one.
+         */
+        public String getOverriddenText() {
+            return overriddenText;
+        }
+
+        /**
+         * Retrieve the subject which is going to override the default one.
+         *
+         * @return the subject which is going to override the default one.
+         */
+        public String getOverriddenSubject() {
+            return overriddenSubject;
+        }
+
+        /**
+         * Retrieve the {@link Uri} which is going to override the default one.
+         *
+         * @return the {@link Uri} which is going to override the default one.
+         */
+        public Uri getOverriddenImage() {
+            return overriddenImage;
+        }
+
+        /**
+         * Used to know if the default text must be ignored.
+         *
+         * @return true if the default text must be ignored.
+         */
+        public boolean isTextDisabled() {
+            return textDisabled;
+        }
+
+        /**
+         * Used to know if the default subject must be ignored.
+         *
+         * @return true if the default subject must be ignored.
+         */
+        public boolean isSubjectDisabled() {
+            return subjectDisabled;
+        }
+
+        /**
+         * Used to know if the default image must be ignored.
+         *
+         * @return true if the default image must be ignored.
+         */
+        public boolean isImageDisabled() {
+            return imageDisabled;
+        }
     }
 }
