@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Simple activity used to allow the user to choose a target activity for the sharing intent.
@@ -31,6 +30,11 @@ public class TargetChooserActivity extends AppCompatActivity
      * Key used to save the current scroll during rotation.
      */
     private static final String SAVED_CURRENT_SCROLL_Y = "tca_saved_instance_key_current_scroll";
+
+    /**
+     * Key used to save the target activities.
+     */
+    private static final String SAVED_TARGET_ACTIVITIES = "tca_saved_instance_key_target_activites";
 
     /**
      * Recycler view used to display the list of target application.
@@ -92,8 +96,10 @@ public class TargetChooserActivity extends AppCompatActivity
      * Used to keep current recycler scroll y up to date.
      */
     private int currentRecyclerScrollY;
+
     private View rootView;
-    private List<TargetActivity> targetActivities;
+    private ArrayList<TargetActivity> targetActivities;
+    private int resolvedLabels;
 
     /**
      * Simple activity used to allow the user to choose a target activity for the sharing intent.
@@ -137,11 +143,24 @@ public class TargetChooserActivity extends AppCompatActivity
 
         rootView.setOnClickListener(this);
 
+        final boolean shouldResolveTargetActivities;
+        if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_TARGET_ACTIVITIES)) {
+            shouldResolveTargetActivities = false;
+            targetActivities = savedInstanceState.getParcelableArrayList(SAVED_TARGET_ACTIVITIES);
+            //noinspection ConstantConditions
+            resolvedLabels = targetActivities.size();
+        } else {
+            shouldResolveTargetActivities = true;
+            targetActivities = new ArrayList<>();
+        }
+
         setUpRecyclerView(savedInstanceState);
         setUpStickyTitle();
 
-        targetActivityManager = new TargetActivityManager();
-        targetActivityManager.resolveTargetActivities(this, this);
+        if (shouldResolveTargetActivities) {
+            targetActivityManager = new TargetActivityManager();
+            targetActivityManager.resolveTargetActivities(this, this);
+        }
     }
 
     @Override
@@ -153,6 +172,10 @@ public class TargetChooserActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SAVED_CURRENT_SCROLL_Y, currentRecyclerScrollY);
+
+        if (resolvedLabels == targetActivities.size()) {
+            outState.putParcelableArrayList(SAVED_TARGET_ACTIVITIES, targetActivities);
+        }
     }
 
     @Override
@@ -193,10 +216,10 @@ public class TargetChooserActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLabelResolved(TargetActivity targetActivity) {
+    public void onLabelResolved(@NonNull TargetActivity targetActivity) {
         adapter.notifyTargetActivityChanged(targetActivity);
+        resolvedLabels++;
     }
-
 
     private void setUpRecyclerView(Bundle savedInstance) {
         recyclerView.setLayoutManager(
@@ -206,7 +229,7 @@ public class TargetChooserActivity extends AppCompatActivity
                         false
                 )
         );
-        targetActivities = new ArrayList<>();
+
         adapter = new TargetActivityAdapter(
                 targetActivities,
                 intentShare.chooserTitle,
