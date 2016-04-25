@@ -140,7 +140,7 @@ public class TargetChooserActivity extends AppCompatActivity
         setUpRecyclerView(savedInstanceState);
         setUpStickyTitle();
 
-        targetActivityManager = new TargetActivityManager();
+        targetActivityManager = TargetActivityManager.getInstance();
         targetActivityManager.resolveTargetActivities(this, this);
     }
 
@@ -193,12 +193,11 @@ public class TargetChooserActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLabelResolved(TargetActivity targetActivity) {
+    public void onLabelResolved(@NonNull TargetActivity targetActivity) {
         adapter.notifyTargetActivityChanged(targetActivity);
     }
 
-
-    private void setUpRecyclerView(Bundle savedInstance) {
+    private void setUpRecyclerView(final Bundle savedInstance) {
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(
                         this,
@@ -226,10 +225,14 @@ public class TargetChooserActivity extends AppCompatActivity
                         int startingHeight = Math.min(totalHeight, maxStartingHeight);
                         recyclerPaddingTop = recyclerView.getHeight() - startingHeight;
                         recyclerView.setPadding(0, recyclerPaddingTop, 0, 0);
-                        recyclerView.setTranslationY(recyclerView.getHeight());
                         recyclerView.setAdapter(adapter);
-                        recyclerView.animate().translationY(0).setListener(null);
-                        return false;
+
+                        if (savedInstance == null) {
+                            recyclerView.setTranslationY(recyclerView.getHeight());
+                            recyclerView.animate().translationY(0).setListener(null);
+                        }
+
+                        return true;
                     }
                 }
         );

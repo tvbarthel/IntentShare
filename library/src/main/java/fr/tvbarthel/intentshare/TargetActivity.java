@@ -1,6 +1,5 @@
 package fr.tvbarthel.intentshare;
 
-import android.content.Context;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 
@@ -23,11 +22,10 @@ class TargetActivity {
     /**
      * Plain java model for a sharing target activity.
      *
-     * @param context       context used to load target activity label.
      * @param resolveInfo   {@link ResolveInfo} linked to the target activity.
      * @param lastSelection time stamp in milli of  last selection.
      */
-    public TargetActivity(Context context, ResolveInfo resolveInfo, long lastSelection) {
+    public TargetActivity(ResolveInfo resolveInfo, long lastSelection) {
         this.lastSelection = lastSelection;
         this.resolveInfo = resolveInfo;
 

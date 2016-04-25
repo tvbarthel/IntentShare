@@ -18,7 +18,9 @@ import java.util.List;
 /**
  * Manager used to handle all logic linked to {@link TargetActivity}
  */
-class TargetActivityManager {
+final class TargetActivityManager {
+
+    private static TargetActivityManager instance;
 
     /**
      * Shared preferences key used to store chosen activities.
@@ -45,7 +47,7 @@ class TargetActivityManager {
     /**
      * Manager used to handle all logic linked to {@link TargetActivity}
      */
-    public TargetActivityManager() {
+    private TargetActivityManager() {
         targetActivities = new ArrayList<>();
     }
 
@@ -59,45 +61,52 @@ class TargetActivityManager {
      * @param listener listener used to catch resolving events.
      */
     public void resolveTargetActivities(Context context, ResolveListener listener) {
-        targetActivities.clear();
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getApplicationContext()
+                    .getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        }
 
-        sharedPreferences = context.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        if (targetActivities.isEmpty()) {
+            final PackageManager packageManager = context.getPackageManager();
 
-        PackageManager packageManager = context.getPackageManager();
+            Intent intentShare = new Intent(Intent.ACTION_SEND);
+            intentShare.putExtra(Intent.EXTRA_TEXT, "queryText");
+            intentShare.setType("text/plain");
+            List<ResolveInfo> shareActivities = packageManager.queryIntentActivities(
+                    intentShare,
+                    PackageManager.GET_RESOLVED_FILTER
+            );
 
-        Intent intentShare = new Intent(Intent.ACTION_SEND);
-        intentShare.putExtra(Intent.EXTRA_TEXT, "queryText");
-        intentShare.setType("text/plain");
-        List<ResolveInfo> shareActivities = packageManager.queryIntentActivities(
-                intentShare,
-                PackageManager.GET_RESOLVED_FILTER
-        );
+            for (int i = 0; i < shareActivities.size(); i++) {
+                ResolveInfo targetActivityInfo = shareActivities.get(i);
+                IntentFilter filter = targetActivityInfo.filter;
+                if (filter.hasDataType("text/plain")) {
 
-        for (int i = 0; i < shareActivities.size(); i++) {
-            ResolveInfo targetActivityInfo = shareActivities.get(i);
-            IntentFilter filter = targetActivityInfo.filter;
-            if (filter.hasDataType("text/plain")) {
+                    String lastSelectionKey = getLastSelectionKey(
+                            targetActivityInfo.activityInfo.packageName,
+                            targetActivityInfo.activityInfo.name
+                    );
 
-                String lastSelectionKey = getLastSelectionKey(
-                        targetActivityInfo.activityInfo.packageName,
-                        targetActivityInfo.activityInfo.name
-                );
+                    long lastSelection = sharedPreferences.getLong(lastSelectionKey, 0);
 
-                long lastSelection = sharedPreferences.getLong(lastSelectionKey, 0);
-
-                TargetActivity targetActivity
-                        = new TargetActivity(context, targetActivityInfo, lastSelection);
-                targetActivities.add(targetActivity);
+                    TargetActivity targetActivity
+                            = new TargetActivity(targetActivityInfo, lastSelection);
+                    targetActivities.add(targetActivity);
+                }
             }
         }
 
         Collections.sort(targetActivities, new TargetActivity.RecencyComparator());
+        listener.onTargetActivitiesResolved(targetActivities);
 
         for (int i = 0; i < targetActivities.size(); i++) {
-            new AsyncLabelLoader(context, targetActivities.get(i), listener).execute();
+            final TargetActivity targetActivity = targetActivities.get(i);
+            if (targetActivity.getLabel() != null) {
+                listener.onLabelResolved(targetActivity);
+            } else {
+                new AsyncLabelLoader(context, targetActivity, listener).execute();
+            }
         }
-
-        listener.onTargetActivitiesResolved(targetActivities);
     }
 
     private String getLastSelectionKey(String packageName, String activityName) {
@@ -119,16 +128,24 @@ class TargetActivityManager {
                 )
         );
 
+        final long lastSelectionTime = System.currentTimeMillis();
         sharedPreferences
                 .edit()
                 .putLong(getLastSelectionKey(
-                                targetActivity.getPackageName(),
-                                targetActivity.getActivityName()
+                        targetActivity.getPackageName(),
+                        targetActivity.getActivityName()
                         ),
-                        System.currentTimeMillis()
+                        lastSelectionTime
                 )
                 .apply();
 
+        // Clone the target activity selected, with the last selection time
+        final TargetActivity clone = new TargetActivity(targetActivity.getResolveInfo(), lastSelectionTime);
+        clone.setLabel(targetActivity.getLabel());
+
+        // And put it in the list of target activities.
+        targetActivities.remove(targetActivity);
+        targetActivities.add(clone);
     }
 
     /**
@@ -208,6 +225,25 @@ class TargetActivityManager {
             intent.setType("image/jpeg");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
+    }
+
+
+    /**
+     * Get an instance of {@link TargetActivityManager}.
+     *
+     * @return an instance of {@link TargetActivityManager}.
+     */
+    @SuppressWarnings("PMD.DoubleCheckedLocking")
+    public static TargetActivityManager getInstance() {
+        if (instance == null) {
+            synchronized (TargetActivityManager.class) {
+                if (instance == null) {
+                    instance = new TargetActivityManager();
+                }
+            }
+        }
+
+        return instance;
     }
 
     /**
