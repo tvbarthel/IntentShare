@@ -3,6 +3,7 @@
     android:id="@+id/activity_target_chooser_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/isl_activity_translucent_background"
     android:fitsSystemWindows="true">
 
     <fr.tvbarthel.intentshare.BottomRecyclerView

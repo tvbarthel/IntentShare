@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,8 +96,31 @@ public class TargetChooserActivity extends AppCompatActivity
      * Used to keep current recycler scroll y up to date.
      */
     private int currentRecyclerScrollY;
+
+    /**
+     * Root view of the activity
+     */
     private View rootView;
+
+    /**
+     * List of sharing target activity.
+     */
     private List<TargetActivity> targetActivities;
+
+    /**
+     * Duration in milli.
+     */
+    private long animationDuration;
+
+    /**
+     * Interpolator for element which enter the screen.
+     */
+    private Interpolator inInterpolator;
+
+    /**
+     * Interpolator for element which leave the screen.
+     */
+    private Interpolator outInterpolator;
 
     /**
      * Simple activity used to allow the user to choose a target activity for the sharing intent.
@@ -107,10 +134,7 @@ public class TargetChooserActivity extends AppCompatActivity
         context.startActivity(intent);
 
         if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(
-                    android.R.anim.fade_in,
-                    android.R.anim.fade_out
-            );
+            ((Activity) context).overridePendingTransition(-1, -1);
         }
     }
 
@@ -135,13 +159,20 @@ public class TargetChooserActivity extends AppCompatActivity
         selectedTargetActivity = null;
         listenerNotified = false;
 
+        Resources resources = getResources();
+        animationDuration = resources.getInteger(android.R.integer.config_mediumAnimTime);
+
         rootView.setOnClickListener(this);
+        rootView.setAlpha(0f);
 
         setUpRecyclerView(savedInstanceState);
         setUpStickyTitle();
 
         targetActivityManager = new TargetActivityManager();
         targetActivityManager.resolveTargetActivities(this, this);
+
+        inInterpolator = new DecelerateInterpolator();
+        outInterpolator = new AccelerateInterpolator();
     }
 
     @Override
@@ -218,6 +249,7 @@ public class TargetChooserActivity extends AppCompatActivity
 
         recyclerView.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
+
                     @Override
                     public boolean onPreDraw() {
                         recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
@@ -228,7 +260,16 @@ public class TargetChooserActivity extends AppCompatActivity
                         recyclerView.setPadding(0, recyclerPaddingTop, 0, 0);
                         recyclerView.setTranslationY(recyclerView.getHeight());
                         recyclerView.setAdapter(adapter);
-                        recyclerView.animate().translationY(0).setListener(null);
+                        rootView.animate()
+                                .alpha(1f)
+                                .setDuration(animationDuration)
+                                .setInterpolator(inInterpolator)
+                                .setListener(null);
+                        recyclerView.animate()
+                                .translationY(0)
+                                .setDuration(animationDuration)
+                                .setInterpolator(inInterpolator)
+                                .setListener(null);
                         return false;
                     }
                 }
@@ -267,18 +308,32 @@ public class TargetChooserActivity extends AppCompatActivity
 
     private void finishAnimated() {
         rootView.animate()
-                .translationY(rootView.getHeight())
+                .alpha(0)
+                .setDuration(animationDuration)
+                .setInterpolator(outInterpolator)
                 .setListener(new AnimatorListenerAdapter() {
                                  @Override
                                  public void onAnimationEnd(Animator animation) {
                                      super.onAnimationEnd(animation);
                                      TargetChooserActivity.this.finish();
-                                     TargetChooserActivity.this.overridePendingTransition(
-                                             android.R.anim.fade_in,
-                                             android.R.anim.fade_out
-                                     );
+                                     TargetChooserActivity.this.overridePendingTransition(-1, -1);
                                  }
                              }
                 );
+        recyclerView.animate()
+                .translationY(rootView.getHeight())
+                .setDuration(animationDuration)
+                .setInterpolator(outInterpolator)
+                .setListener(null);
+        stickyShadow.animate()
+                .translationY(rootView.getHeight())
+                .setDuration(animationDuration)
+                .setInterpolator(outInterpolator)
+                .setListener(null);
+        stickyTitle.animate()
+                .translationY(rootView.getHeight())
+                .setDuration(animationDuration)
+                .setInterpolator(outInterpolator)
+                .setListener(null);
     }
 }
