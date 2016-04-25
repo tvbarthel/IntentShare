@@ -212,7 +212,7 @@
                     <a href="https://github.com/tvbarthel/IntentShare"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
 					 <img class="fullWidthImage" src="resources/store_banner.png" alt="IntentShare banner"/>
                     <p>
-                        IntentShare is a light open-source library that improves the sharing experience on Android applications.
+                        IntentShare is a light open-source Android library that improves the sharing experience on API 16 and above.
                     </p>   
 					
 					<h1>TL;DR</h1>
@@ -456,7 +456,7 @@ sendIntent.putExtra(
 						Unfortunately, with the current tools of the Android  framework,  this feature is only accessible from API 22 thanks to 
 						<a href="http://developer.android.com/reference/android/content/Intent.html#createChooser(android.content.Intent, java.lang.CharSequence, android.content.IntentSender)"> 
 						Intent.createChooser(CharSequence, IntentSender)</a>. 
-						<h4>This lack of tracking target activities pre 22 was our second motivation for designing a new sharing tool since still 78.5% of devices are pre 22.</h4>
+						<h4>Since still 78.5% of devices are pre 22, tracking selected activities became our second motivation for designing a new sharing tool which provide a listener from API 16.</h4>
 						</p>
 						
 					<p>
@@ -563,6 +563,7 @@ of the device can grant permission through the Settings application.
 						Therefore, we decided not to try to replicate the native behaviour but to provide instead what we thought to be a good alternative.
 					</p>
 
+					<h5>Our sorting</h5>
 					<p>
 						As providing the same listing for every emitting applications seems to be hard to tackle without system permission, we started to
 						think about providing a specific list for each emitting apps and the more we thought about it the more we were confident about providing a decent user experience.
@@ -627,7 +628,9 @@ of the device can grant permission through the Settings application.
 						</script>
 						<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 						<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-						  
+					</br>	  
+					<h2>Special Thanks to ...</h2>
+                    <p>Vincent Brison <a href="http://vincentbrison.com/">http://vincentbrison.com/</a> , for his precious advice.</p>
 					</br>
                     <h2>License</h2>
                     <p style="white-space: pre-wrap;">Copyright (C) 2016 tvbarthel
