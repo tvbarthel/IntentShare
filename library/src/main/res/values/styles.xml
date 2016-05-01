@@ -6,6 +6,6 @@
 
     <style name="isl_ActivityThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/isl_activity_translucent_background</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 </resources>
