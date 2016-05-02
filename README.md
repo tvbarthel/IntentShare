@@ -18,6 +18,7 @@ This project is a light open-source library that improves the sharing experience
   * [Picasso](#picasso)
   * [Glide](#glide)
   * [Custom icon loader](#custom-icon-loader)
+* [What's next](#whats-next)
 * [Contributing](#contributing)
 * [License](#license)
 * [Special Thanks](#special-thanks-to-)
@@ -244,7 +245,10 @@ IntentShare.with(context)
     })
     .deliver();
 ```
-
+# What's next
+ * Providing custom sorting for target activities.
+ * Providing easier way to share images.
+ 
 # Contributing
 Contributions are very welcome (: You can contribute through GitHub by forking the repository and sending a pull request.
 
@@ -270,3 +274,4 @@ limitations under the License.
 
 # Special Thanks to ...
 Vincent Brison [https://github.com/vincentbrison](https://github.com/vincentbrison) , for his precious advice.
+Stéphane Guérin [https://github.com/guerwan](https://github.com/guerwan) , for his helpful feedback.
