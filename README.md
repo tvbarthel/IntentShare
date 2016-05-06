@@ -3,6 +3,9 @@ IntentShare
 
 [![Maven Central](http://img.shields.io/maven-central/v/fr.tvbarthel.intentshare/library.svg)](http://search.maven.org/#search%7Cga%7C1%7Cintentshare)
 
+
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-IntentShare-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3551)
+
 This project is a light open-source library that improves the sharing experience on Android.
 
 * [Motivations](#motivations)
