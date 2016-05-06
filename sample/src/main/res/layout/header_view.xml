@@ -31,20 +31,12 @@
         android:textColor="@color/colorAccent"
         android:textSize="18sp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/default_providers"
-        android:textColor="@color/colorAccent"
-        android:textSize="18sp" />
-
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
 
         <EditText
             android:id="@+id/main_header_view_input_dialog_title"
@@ -54,6 +46,15 @@
             android:nextFocusDown="@+id/main_header_view_input_text" />
 
     </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/default_providers"
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp" />
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
