@@ -10,15 +10,12 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
-    resourcePrefix 'isl_'
-
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -30,10 +27,10 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.9.5'
-    testCompile 'org.robolectric:robolectric:3.0'
-    compile 'com.android.support:appcompat-v7:23.2.0'
-    compile 'com.android.support:recyclerview-v7:23.2.0'
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile project(':library')
 }
 
 Properties properties = new Properties()
@@ -53,13 +50,13 @@ bintray {
     //Package configuration. The plugin will use the repo and name properties to check if the package already exists. In that case, there's no need to configure the other package properties (like userOrg, desc, etc).
     pkg {
         repo = 'maven'
-        name = 'IntentShare'
-        desc = 'IntentShare is a light open-source library that improves the sharing experience of their Android applications.'
+        name = 'PicassoLoader'
+        desc = 'Icon loader based on Picasso for IntentShare library.'
         websiteUrl = 'https://github.com/tvbarthel/IntentShare'
         issueTrackerUrl = 'https://github.com/tvbarthel/IntentShare/issues'
         vcsUrl = 'https://github.com/tvbarthel/IntentShare.git'
         licenses = ['Apache-2.0']
-        labels = ['android', 'intent', 'sharing', 'share']
+        labels = ['android', 'intent', 'sharing', 'share', 'picasso']
         publicDownloadNumbers = true
         version {
             gpg {
@@ -75,9 +72,9 @@ install {
         pom {
             project {
                 packaging 'aar'
-                name 'IntentShare'
+                name 'PicassoLoader'
                 url 'https://github.com/tvbarthel/IntentShare'
-                description 'IntentShare is a light open-source library that improves the sharing experience of their Android applications.'
+                description 'Icon loader based on Picasso for IntentShare library.'
                 licenses {
                     license {
                         name 'The Apache Software License, Version 2.0'

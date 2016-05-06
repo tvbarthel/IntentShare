@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/sample_icon_loader_default"
+            android:checked="true"
+            android:title="@string/icon_loader_default" />
+        <item
+            android:id="@+id/sample_icon_loader_picasso"
+            android:title="@string/icon_loader_picasso" />
+        <item
+            android:id="@+id/sample_icon_loader_glide"
+            android:title="@string/icon_loader_glide" />
+    </group>
+</menu>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ScrollView
+        android:id="@+id/fragment_dialog_extra_provider_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="70dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical"
+            android:padding="@dimen/default_padding">
+
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/fragment_dialog_extra_provider_app_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <EditText
+                    android:id="@+id/fragment_dialog_extra_provider_app_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/fragment_dialog_extra_provider_app_name_hint"
+                    android:inputType="textPersonName"
+                    android:nextFocusDown="@+id/fragment_dialog_extra_provider_package_name"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/fragment_dialog_extra_provider_package_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+                <EditText
+                    android:id="@+id/fragment_dialog_extra_provider_package_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/fragment_dialog_extra_provider_package_name_hint"
+                    android:inputType="textUri"
+                    android:nextFocusDown="@+id/fragment_dialog_extra_provider_text"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/override"
+                android:textSize="18sp" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <EditText
+                    android:id="@+id/fragment_dialog_extra_provider_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/fragment_dialog_extra_provider_text_hint"
+                    android:inputType="textMultiLine"
+                    android:nextFocusDown="@+id/fragment_dialog_extra_provider_subject" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <EditText
+                    android:id="@+id/fragment_dialog_extra_provider_subject"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/fragment_dialog_extra_provider_subject_hint"
+                    android:inputType="textMultiLine"
+                    android:nextFocusDown="@+id/fragment_dialog_extra_provider_default_text_check" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/default_padding"
+                android:text="@string/image_override_warning"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/disable"
+                android:textSize="18sp" />
+
+            <CheckBox
+                android:id="@+id/fragment_dialog_extra_provider_default_text_check"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/default_text" />
+
+            <CheckBox
+                android:id="@+id/fragment_dialog_extra_provider_default_subject_check"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/default_subject" />
+
+            <CheckBox
+                android:id="@+id/fragment_dialog_extra_provider_default_image_check"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/default_image" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/fragment_dialog_extra_provider_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="?attr/selectableItemBackground"
+        android:padding="@dimen/default_padding"
+        android:text="@android:string/ok"
+        android:textColor="@color/colorAccent" />
+
+</FrameLayout>
