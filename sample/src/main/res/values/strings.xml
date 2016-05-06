@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IntentShareSample</string>
+    <string name="app_name">IntentShare Sample</string>
     <string name="icon_loader_default">Default IconLoader</string>
     <string name="icon_loader_picasso">Picasso IconLoader</string>
     <string name="icon_loader_glide">Glide IconLoader</string>

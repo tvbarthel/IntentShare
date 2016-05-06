@@ -1,6 +1,8 @@
 IntentShare
 ==================
 
+[![Maven Central](http://img.shields.io/maven-central/v/fr.tvbarthel.intentshare/library.svg)](http://search.maven.org/#search%7Cga%7C1%7Cintentshare)
+
 This project is a light open-source library that improves the sharing experience on Android.
 
 * [Motivations](#motivations)
@@ -32,14 +34,21 @@ Nowadays, sharing content is part of our daily life. Unfortunately, the Android 
 * providing an easy way to track the selected target activities in order to improve/adapt the extras for a specific target.
 * providing a sorted target activity list based on the context of your app in order to take advantages of how people use it.
 
-Find more about our motivations [here](http://tvbarthel.github.io/IntentShares/).
+Find more about our motivations [here](http://tvbarthel.fr/IntentShare/).
 
 # Sample app
-Incoming.
+[Sample app available on the PlayStore](https://play.google.com/store/apps/details?id=fr.tvbarthel.intentsharesample)
 
 # Gradle dependency
+available on jcenter.
 ```groovy
 compile 'fr.tvbarthel.intentshare:library:0.0.1'
+```
+
+dependencies
+```groovy
+compile 'com.android.support:appcompat-v7:23.+'
+compile 'com.android.support:recyclerview-v7:23.+'
 ```
 
 # Usage
@@ -248,6 +257,8 @@ IntentShare.with(context)
 # What's next
  * Providing custom sorting for target activities.
  * Providing easier way to share images.
+ * Removing dependencies on support libraries.
+ * Sample : implementing image selection for extra provider.
  
 # Contributing
 Contributions are very welcome (: You can contribute through GitHub by forking the repository and sending a pull request.
@@ -257,7 +268,7 @@ When submitting code, please make sure ./gradlew check succeed.
 
 # License
 ```
-Copyright (C) 2015 tvbarthel
+Copyright (C) 2016 tvbarthel
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -275,3 +286,4 @@ limitations under the License.
 # Special Thanks to ...
 Vincent Brison [https://github.com/vincentbrison](https://github.com/vincentbrison) , for his precious advice.
 Stéphane Guérin [https://github.com/guerwan](https://github.com/guerwan) , for his helpful feedback.
+Romain Zanon [https://github.com/romainz](https://github.com/romainz) , for his early day support.
