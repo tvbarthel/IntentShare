@@ -15,6 +15,18 @@
             </intent-filter>
         </activity>
 
+        <!-- provider used to expose image through sharing intent!-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="fr.tvbarthel.intentsharesample.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+
     </application>
 
 </manifest>

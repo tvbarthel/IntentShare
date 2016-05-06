@@ -2,4 +2,8 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- padding used at bottom of container to ensure nothing will be display under FAB when scroll to the end !-->
+    <dimen name="fab_padding_safeness">80dp</dimen>
+    <dimen name="default_padding">16dp</dimen>
 </resources>
