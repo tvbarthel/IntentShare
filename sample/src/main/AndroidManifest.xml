@@ -17,7 +17,7 @@
 
         <!-- provider used to expose image through sharing intent!-->
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name=".SharingFileProvider"
             android:authorities="fr.tvbarthel.intentsharesample.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
