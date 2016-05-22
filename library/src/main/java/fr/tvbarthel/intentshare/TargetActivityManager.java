@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -55,10 +56,12 @@ class TargetActivityManager {
      * Basically, resolve the list of {@link android.app.Activity} which can handled
      * {@link Intent#ACTION_SEND}.
      *
-     * @param context  context used to resolves target activities.
-     * @param listener listener used to catch resolving events.
+     * @param context    context used to resolves target activities.
+     * @param listener   listener used to catch resolving events.
+     * @param comparator comparator used to sort the resolved target activities.
      */
-    public void resolveTargetActivities(Context context, ResolveListener listener) {
+    public void resolveTargetActivities(Context context, ResolveListener listener,
+                                        Comparator<TargetActivity> comparator) {
         targetActivities.clear();
 
         sharedPreferences = context.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
@@ -91,7 +94,7 @@ class TargetActivityManager {
             }
         }
 
-        Collections.sort(targetActivities, new TargetActivity.RecencyComparator());
+        Collections.sort(targetActivities, comparator);
 
         for (int i = 0; i < targetActivities.size(); i++) {
             new AsyncLabelLoader(context, targetActivities.get(i), listener).execute();
