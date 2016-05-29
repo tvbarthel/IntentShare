@@ -6,23 +6,33 @@
     android:background="@color/isl_activity_translucent_background"
     android:fitsSystemWindows="true">
 
+    <View
+        android:id="@+id/activity_target_chooser_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/isl_target_activity_view_background" />
+
     <fr.tvbarthel.intentshare.BottomRecyclerView
         android:id="@+id/activity_target_chooser_recycler_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"
+        android:paddingLeft="@dimen/isl_target_activity_recycler_padding"
+        android:paddingRight="@dimen/isl_target_activity_recycler_padding" />
 
     <fr.tvbarthel.intentshare.TargetActivityHeaderView
         android:id="@+id/activity_chooser_sticky_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/isl_default_padding"
+        android:paddingRight="@dimen/isl_default_padding" />
 
     <View
         android:id="@+id/activity_chooser_sticky_title_shadow"
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:layout_marginTop="@dimen/isl_target_activity_view_height"
+        android:layout_marginTop="@dimen/isl_target_activity_header_view_height"
         android:background="@drawable/isl_shadow_bottom" />
 
 </FrameLayout>
