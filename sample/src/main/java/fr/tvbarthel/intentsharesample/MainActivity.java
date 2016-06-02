@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import fr.tvbarthel.intentshare.IconLoader;
 import fr.tvbarthel.intentshare.IntentShare;
 import fr.tvbarthel.intentshare.IntentShareListener;
+import fr.tvbarthel.intentshare.TargetActivityComparatorProvider;
 import fr.tvbarthel.intentshare.loader.glide.GlideIconLoader;
 import fr.tvbarthel.intentshare.loader.picasso.PicassoIconLoader;
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private PicassoIconLoader picassoIconLoader;
     private IconLoader iconLoader;
+    private TargetActivityComparatorProvider customComparatorProvider;
     private GlideIconLoader glideIconLoader;
 
     private String targetPackage;
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         targetPackage = null;
+        customComparatorProvider = null;
 
         intentShareListener = new IntentShareListener() {
             @Override
@@ -119,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements
                     glideIconLoader = new GlideIconLoader();
                 }
                 iconLoader = picassoIconLoader;
+                break;
+            case R.id.sorting_default:
+                customComparatorProvider = null;
+                break;
+            case R.id.sorting_custom:
+                customComparatorProvider = new SocialTargetActivityComparatorProvider();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -200,6 +209,9 @@ public class MainActivity extends AppCompatActivity implements
                 .facebookBody(facebookLink)
                 .twitterBody(tweet)
                 .listener(intentShareListener);
+        if (customComparatorProvider != null) {
+            intentShare.comparatorProvider(customComparatorProvider);
+        }
         if (iconLoader != null) {
             intentShare.iconLoader(iconLoader);
         }

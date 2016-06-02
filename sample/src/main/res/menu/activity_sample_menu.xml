@@ -1,15 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/sample_icon_loader_default"
-            android:checked="true"
-            android:title="@string/icon_loader_default" />
-        <item
-            android:id="@+id/sample_icon_loader_picasso"
-            android:title="@string/icon_loader_picasso" />
-        <item
-            android:id="@+id/sample_icon_loader_glide"
-            android:title="@string/icon_loader_glide" />
-    </group>
+    <item android:title="@string/loader_menu">
+        <menu>
+            <group
+                android:id="@+id/loader_group"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sample_icon_loader_default"
+                    android:checked="true"
+                    android:title="@string/icon_loader_default" />
+                <item
+                    android:id="@+id/sample_icon_loader_picasso"
+                    android:title="@string/icon_loader_picasso" />
+                <item
+                    android:id="@+id/sample_icon_loader_glide"
+                    android:title="@string/icon_loader_glide" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="@string/sorting_menu">
+        <menu>
+            <group
+                android:id="@+id/sorting_group"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sorting_default"
+                    android:checked="true"
+                    android:title="@string/sorting_default" />
+                <item
+                    android:id="@+id/sorting_custom"
+                    android:title="@string/sorting_custom" />
+            </group>
+        </menu>
+    </item>
 </menu>

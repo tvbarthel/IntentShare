@@ -1,7 +1,6 @@
 package fr.tvbarthel.intentsharesample;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -96,9 +95,6 @@ class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             public void onExtraProviderDetailRequested(ExtraProviderWrapper wrapper) {
                 if (listener != null) {
                     int wrapperPosition = Adapter.this.extraProviders.indexOf(wrapper);
-                    if (wrapperPosition == -1) {
-                        Log.e("LARGONNE", "wrapper position -1 : " + wrapper);
-                    }
                     listener.onExtraProviderDetailRequested(wrapperPosition, wrapper);
                 }
             }

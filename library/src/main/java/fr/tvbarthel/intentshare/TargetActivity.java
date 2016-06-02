@@ -3,15 +3,15 @@ package fr.tvbarthel.intentshare;
 import android.content.Context;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Parcel;
 
 import java.io.File;
-import java.text.Collator;
 import java.util.Comparator;
 
 /**
  * Plain java model for a sharing target activity.
  */
-class TargetActivity {
+public class TargetActivity {
 
     private final int activityLabelResId;
     private final Uri iconUri;
@@ -56,19 +56,6 @@ class TargetActivity {
         }
 
         TargetActivity that = (TargetActivity) o;
-
-        if (activityLabelResId != that.activityLabelResId) {
-            return false;
-        }
-        if (isMail != that.isMail) {
-            return false;
-        }
-        if (lastSelection != that.lastSelection) {
-            return false;
-        }
-        if (!iconUri.equals(that.iconUri)) {
-            return false;
-        }
         return resolveInfo.equals(that.resolveInfo);
 
     }
@@ -76,9 +63,6 @@ class TargetActivity {
     @Override
     public int hashCode() {
         int result = activityLabelResId;
-        result = 31 * result + iconUri.hashCode();
-        result = 31 * result + (isMail ? 1 : 0);
-        result = 31 * result + (int) (lastSelection ^ (lastSelection >>> 32));
         result = 31 * result + resolveInfo.hashCode();
         return result;
     }
@@ -141,11 +125,21 @@ class TargetActivity {
     }
 
     /**
+     * Return a timestamp of the last selection inside the sharing dialog from you application.
+     *
+     * @return timestamp of the last selection in milliseconds since January 1, 1970 00:00:00.0 UTC
+     * or 0 if the target activity has never been selected by the user.
+     */
+    public long getLastSelection() {
+        return lastSelection;
+    }
+
+    /**
      * Retrieve the label of the target activity.
      *
      * @return return target activity label or null if not yet loaded.
      */
-    public CharSequence getLabel() {
+    CharSequence getLabel() {
         return label;
     }
 
@@ -169,42 +163,85 @@ class TargetActivity {
 
     /**
      * Comparator used to sort {@link TargetActivity} based on the recency of their previous
-     * selection and their name as fallback when they have never been selected.
+     * selection and their default order as fallback when they have never been selected.
      * <p/>
      * The ordering imposed by this comparator on a set of {@link TargetActivity}
      * is not consistent with equals since c.compare(e1, e2)==0 has not the same boolean
      * value as e1.equals(e2).
      */
-    public static final class RecencyComparator implements Comparator<TargetActivity> {
+    public static final class RecencyComparatorProvider implements TargetActivityComparatorProvider {
 
-        private final Collator mCollator = Collator.getInstance();
+        /**
+         * Parcelable.
+         */
+        public static final Creator<RecencyComparatorProvider> CREATOR = new Creator<RecencyComparatorProvider>() {
+            @Override
+            public RecencyComparatorProvider createFromParcel(Parcel source) {
+                return new RecencyComparatorProvider(source);
+            }
+
+            @Override
+            public RecencyComparatorProvider[] newArray(int size) {
+                return new RecencyComparatorProvider[size];
+            }
+        };
 
         /**
          * Comparator used to sort {@link TargetActivity} based on the recency of their previous
-         * selection and their name as fallback when they have never been selected.
+         * selection and their default order as fallback when they have never been selected.
          * <p/>
          * The ordering imposed by this comparator on a set of {@link TargetActivity}
          * is not consistent with equals since c.compare(e1, e2)==0 has not the same boolean
          * value as e1.equals(e2).
          */
-        public RecencyComparator() {
-            mCollator.setStrength(Collator.PRIMARY);
+        public RecencyComparatorProvider() {
+
+        }
+
+        /**
+         * Comparator used to sort {@link TargetActivity} based on the recency of their previous
+         * selection and their default order as fallback when they have never been selected.
+         * <p/>
+         * The ordering imposed by this comparator on a set of {@link TargetActivity}
+         * is not consistent with equals since c.compare(e1, e2)==0 has not the same boolean
+         * value as e1.equals(e2).
+         *
+         * @param in parcel.
+         */
+        protected RecencyComparatorProvider(Parcel in) {
+
+        }
+
+
+        @Override
+        public Comparator<TargetActivity> provideComparator() {
+            return new Comparator<TargetActivity>() {
+                @Override
+                public int compare(TargetActivity lhs, TargetActivity rhs) {
+                    float lhsScore = lhs.lastSelection;
+                    float rhsScore = rhs.lastSelection;
+
+                    if (lhsScore > 0 && rhsScore > 0) {
+                        return (int) (rhsScore - lhsScore);
+                    } else if (lhsScore > 0) {
+                        return -1;
+                    } else if (rhsScore > 0) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            };
         }
 
         @Override
-        public int compare(TargetActivity lhs, TargetActivity rhs) {
-            float lhsScore = lhs.lastSelection;
-            float rhsScore = rhs.lastSelection;
+        public int describeContents() {
+            return 0;
+        }
 
-            if (lhsScore > 0 && rhsScore > 0) {
-                return (int) (rhsScore - lhsScore);
-            } else if (lhsScore > 0) {
-                return -1;
-            } else if (rhsScore > 0) {
-                return 1;
-            } else {
-                return 0;
-            }
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+
         }
     }
 }

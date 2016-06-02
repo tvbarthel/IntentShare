@@ -169,7 +169,7 @@ public class TargetChooserActivity extends AppCompatActivity
         setUpStickyTitle();
 
         targetActivityManager = new TargetActivityManager();
-        targetActivityManager.resolveTargetActivities(this, this);
+        targetActivityManager.resolveTargetActivities(this, this, intentShare.comparatorProvider.provideComparator());
 
         inInterpolator = new DecelerateInterpolator();
         outInterpolator = new AccelerateInterpolator();
