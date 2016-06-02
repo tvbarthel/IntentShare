@@ -3,10 +3,15 @@
     <dimen name="isl_default_padding">16dp</dimen>
 
     <!-- Target Activity View !-->
+    <dimen name="isl_target_activity_padding_vertical">16dp</dimen>
+    <dimen name="isl_target_activity_padding_horizontal">16dp</dimen>
     <dimen name="isl_target_activity_view_icon_size">24dp</dimen>
     <dimen name="isl_target_activity_icon_margin_left">10dp</dimen>
-    <dimen name="isl_target_activity_view_label_margin_left">54dp</dimen>
+    <dimen name="isl_target_activity_view_label_icon_margin">54dp</dimen>
     <dimen name="isl_target_activity_header_view_font_size">19sp</dimen>
+    <dimen name="isl_target_activity_header_view_height">60dp</dimen>
     <dimen name="isl_target_activity_view_height">60dp</dimen>
-
+    <dimen name="isl_target_activity_view_text_size">19sp</dimen>
+    <dimen name="isl_target_activity_recycler_padding">0dp</dimen>
+    <dimen name="isl_target_activity_header_extra_padding">@dimen/isl_default_padding</dimen>
 </resources>

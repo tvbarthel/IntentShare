@@ -115,20 +115,14 @@ class TargetActivityView extends FrameLayout {
 
         height = resources.getDimensionPixelSize(R.dimen.isl_target_activity_view_height);
 
-        int padding = resources.getDimensionPixelSize(R.dimen.isl_default_padding);
-        setPadding(padding, padding, padding, padding);
+        int paddingVertical = resources.getDimensionPixelSize(R.dimen.isl_target_activity_padding_vertical);
+        int paddingHorizontal = resources.getDimensionPixelSize(R.dimen.isl_target_activity_padding_horizontal);
+        setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
 
         setForeground(
                 ContextCompat.getDrawable(
                         context,
                         StyledAttributesUtils.getSelectableItemBackground(context)
-                )
-        );
-
-        setBackgroundColor(
-                ContextCompat.getColor(
-                        context,
-                        R.color.isl_target_activity_view_background
                 )
         );
 
