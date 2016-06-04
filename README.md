@@ -23,6 +23,7 @@ This project is a light open-source library that improves the sharing experience
   * [Picasso](#picasso)
   * [Glide](#glide)
   * [Custom icon loader](#custom-icon-loader)
+* [Comparator Provider](#comparator-provider)
 * [What's next](#whats-next)
 * [Contributing](#contributing)
 * [License](#license)
@@ -45,7 +46,7 @@ Find more about our motivations [here](http://tvbarthel.fr/IntentShare/).
 # Gradle dependency
 available on jcenter.
 ```groovy
-compile 'fr.tvbarthel.intentshare:library:0.0.1'
+compile 'fr.tvbarthel.intentshare:library:0.0.2'
 ```
 
 dependencies
@@ -213,7 +214,7 @@ Default icon loader used to load target activities icons is based on AsyncTask.
 ## Picasso
 If your are already using Picasso, you may want to consider using PicassoIconLoader:
 ```groovy
-compile 'fr.tvbarthel.intentshare:picasso-loader:0.0.1'
+compile 'fr.tvbarthel.intentshare:picasso-loader:0.0.2'
 ```
 
 ```java
@@ -227,7 +228,7 @@ IntentShare.with(context)
 ## Glide
 If your are already using Glide, you may want to consider using GlideIconLoader:
 ```groovy
-compile 'fr.tvbarthel.intentshare:glide-loader:0.0.1'
+compile 'fr.tvbarthel.intentshare:glide-loader:0.0.2'
 ```
 
 ```java
@@ -257,12 +258,52 @@ IntentShare.with(context)
     })
     .deliver();
 ```
+# Comparator provider
+By default, target activities are sorted based on the recency of their selection from your app.
+```java
+        /**
+         * Comparator used to sort {@link TargetActivity} based on the recency of their previous
+         * selection and their default order as fallback when they have never been selected.
+         * <p/>
+         * The ordering imposed by this comparator on a set of {@link TargetActivity}
+         * is not consistent with equals since c.compare(e1, e2)==0 has not the same boolean
+         * value as e1.equals(e2).
+         */
+        public RecencyComparatorProvider() {
+
+        }
+```
+Instead of using the default comparator, you can implement your own comparator provider in order to customize the target activities order display to the user:
+```java
+/**
+ * ˙Interface which allow to define which comparator will be provided for sorting the
+ * target activity inside the {@link TargetChooserActivity}.
+ */
+public interface TargetActivityComparatorProvider extends Parcelable {
+
+    /**
+     * Provide the comparator used to sort {@link TargetActivity} displayed to the user.
+     *
+     * @return comparator used to sort {@link TargetActivity} displayed to the user.
+     */
+    Comparator<TargetActivity> provideComparator();
+}
+```
+```java
+IntentShare.with(context)
+    .chooserTitle("Select a sharing target : ")
+    .text("Default text you would like to share.")
+    .comparatorProvider(customComparatorProvider)
+    .deliver();
+```
+An example from the sample can be found here : [SocialTargetActivityComparatorProvider.java](https://github.com/tvbarthel/IntentShare/blob/develop/sample/src/main/java/fr/tvbarthel/intentsharesample/SocialTargetActivityComparatorProvider.java)
+
+
 # What's next
- * Providing custom sorting for target activities.
  * Providing easier way to share images.
  * Removing dependencies on support libraries.
  * Sample : implementing image selection for extra provider.
- 
+
 # Contributing
 Contributions are very welcome (: You can contribute through GitHub by forking the repository and sending a pull request.
 

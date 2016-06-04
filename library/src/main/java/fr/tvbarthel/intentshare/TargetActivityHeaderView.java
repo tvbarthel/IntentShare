@@ -66,7 +66,7 @@ class TargetActivityHeaderView extends TextView {
     }
 
     /**
-     * Initiliaze internal component
+     * Initialize internal component
      *
      * @param context holding context.
      */
@@ -78,7 +78,7 @@ class TargetActivityHeaderView extends TextView {
                 )
         );
         Resources resources = context.getResources();
-        height = resources.getDimensionPixelSize(R.dimen.isl_target_activity_view_height);
+        height = resources.getDimensionPixelSize(R.dimen.isl_target_activity_header_view_height);
         setTextSize(
                 TypedValue.COMPLEX_UNIT_PX,
                 resources.getDimensionPixelSize(R.dimen.isl_target_activity_header_view_font_size)
@@ -92,6 +92,6 @@ class TargetActivityHeaderView extends TextView {
         setSingleLine(true);
         setEllipsize(TextUtils.TruncateAt.END);
         int padding = resources.getDimensionPixelSize(R.dimen.isl_default_padding);
-        setPadding(padding, padding, padding, padding);
+        setPadding(getPaddingLeft(), padding, getPaddingRight(), padding);
     }
 }

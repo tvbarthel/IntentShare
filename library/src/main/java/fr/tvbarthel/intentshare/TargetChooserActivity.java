@@ -9,7 +9,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -123,6 +122,17 @@ public class TargetChooserActivity extends AppCompatActivity
     private Interpolator outInterpolator;
 
     /**
+     * View used as background since recycler view padding can't allow to used
+     * recycler background directly.
+     */
+    private View background;
+
+    /**
+     * Used to know if the activity state has been restored after a saved instance.
+     */
+    private boolean stateRestored;
+
+    /**
      * Simple activity used to allow the user to choose a target activity for the sharing intent.
      *
      * @param context     context used to start the activity.
@@ -154,6 +164,7 @@ public class TargetChooserActivity extends AppCompatActivity
         recyclerView = ((RecyclerView) findViewById(R.id.activity_target_chooser_recycler_list));
         stickyTitle = ((TargetActivityHeaderView) findViewById(R.id.activity_chooser_sticky_title));
         stickyShadow = findViewById(R.id.activity_chooser_sticky_title_shadow);
+        background = findViewById(R.id.activity_target_chooser_background);
 
         targetActivities = new ArrayList<>();
         selectedTargetActivity = null;
@@ -165,11 +176,12 @@ public class TargetChooserActivity extends AppCompatActivity
         rootView.setOnClickListener(this);
         rootView.setAlpha(0f);
 
+        stateRestored = savedInstanceState != null;
         setUpRecyclerView(savedInstanceState);
         setUpStickyTitle();
 
         targetActivityManager = new TargetActivityManager();
-        targetActivityManager.resolveTargetActivities(this, this);
+        targetActivityManager.resolveTargetActivities(this, this, intentShare.comparatorProvider.provideComparator());
 
         inInterpolator = new DecelerateInterpolator();
         outInterpolator = new AccelerateInterpolator();
@@ -189,7 +201,7 @@ public class TargetChooserActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (!listenerNotified) {
+        if (!listenerNotified && !isChangingConfigurations()) {
             IntentShareListener.notifySharingCanceled(this);
         }
     }
@@ -199,7 +211,7 @@ public class TargetChooserActivity extends AppCompatActivity
         super.finish();
         if (selectedTargetActivity != null) {
             IntentShareListener.notifySharingCompleted(this, selectedTargetActivity.getPackageName());
-        } else {
+        } else if (!isChangingConfigurations()) {
             IntentShareListener.notifySharingCanceled(this);
         }
         listenerNotified = true;
@@ -230,13 +242,7 @@ public class TargetChooserActivity extends AppCompatActivity
 
 
     private void setUpRecyclerView(Bundle savedInstance) {
-        recyclerView.setLayoutManager(
-                new LinearLayoutManager(
-                        this,
-                        LinearLayoutManager.VERTICAL,
-                        false
-                )
-        );
+        recyclerView.setLayoutManager(LayoutManagerFactory.buildLayoutManager(this));
         targetActivities = new ArrayList<>();
         adapter = new TargetActivityAdapter(
                 targetActivities,
@@ -246,6 +252,12 @@ public class TargetChooserActivity extends AppCompatActivity
         adapter.setListener(this);
 
         targetActivityViewHeight = getResources().getDimensionPixelSize(R.dimen.isl_target_activity_view_height);
+
+        if (savedInstance != null) {
+            currentRecyclerScrollY = savedInstance.getInt(SAVED_CURRENT_SCROLL_Y, 0);
+        } else {
+            currentRecyclerScrollY = 0;
+        }
 
         recyclerView.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
@@ -257,28 +269,37 @@ public class TargetChooserActivity extends AppCompatActivity
                         int maxStartingHeight = (int) (recyclerView.getHeight() / 2.5f);
                         int startingHeight = Math.min(totalHeight, maxStartingHeight);
                         recyclerPaddingTop = recyclerView.getHeight() - startingHeight;
-                        recyclerView.setPadding(0, recyclerPaddingTop, 0, 0);
+                        recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerPaddingTop,
+                                recyclerView.getPaddingRight(), 0);
                         recyclerView.setTranslationY(recyclerView.getHeight());
+                        int backgroundTranslationY = Math.max(0, recyclerPaddingTop - currentRecyclerScrollY);
+                        background.setTranslationY(recyclerView.getHeight() + backgroundTranslationY);
                         recyclerView.setAdapter(adapter);
-                        rootView.animate()
-                                .alpha(1f)
-                                .setDuration(animationDuration)
-                                .setInterpolator(inInterpolator)
-                                .setListener(null);
-                        recyclerView.animate()
-                                .translationY(0)
-                                .setDuration(animationDuration)
-                                .setInterpolator(inInterpolator)
-                                .setListener(null);
+                        if (stateRestored) {
+                            rootView.setAlpha(1f);
+                            recyclerView.setTranslationY(0);
+                            background.setTranslationY(backgroundTranslationY);
+                        } else {
+                            rootView.animate()
+                                    .alpha(1f)
+                                    .setDuration(animationDuration)
+                                    .setInterpolator(inInterpolator)
+                                    .setListener(null);
+                            recyclerView.animate()
+                                    .translationY(0)
+                                    .setDuration(animationDuration)
+                                    .setInterpolator(inInterpolator)
+                                    .setListener(null);
+                            background.animate()
+                                    .translationY(backgroundTranslationY)
+                                    .setDuration(animationDuration)
+                                    .setInterpolator(inInterpolator)
+                                    .setListener(null);
+                        }
                         return false;
                     }
                 }
         );
-        if (savedInstance != null) {
-            currentRecyclerScrollY = savedInstance.getInt(SAVED_CURRENT_SCROLL_Y, 0);
-        } else {
-            currentRecyclerScrollY = 0;
-        }
         recyclerView.addOnScrollListener(
                 new RecyclerView.OnScrollListener() {
                     @Override
@@ -289,10 +310,14 @@ public class TargetChooserActivity extends AppCompatActivity
                             isStickyTitleDisplayed = true;
                             stickyTitle.setVisibility(View.VISIBLE);
                             stickyShadow.setVisibility(View.VISIBLE);
-                        } else if (isStickyTitleDisplayed && currentRecyclerScrollY < recyclerPaddingTop) {
-                            isStickyTitleDisplayed = false;
-                            stickyTitle.setVisibility(View.INVISIBLE);
-                            stickyShadow.setVisibility(View.INVISIBLE);
+                        } else if (currentRecyclerScrollY < recyclerPaddingTop) {
+                            if (isStickyTitleDisplayed) {
+                                isStickyTitleDisplayed = false;
+                                stickyTitle.setVisibility(View.INVISIBLE);
+                                stickyShadow.setVisibility(View.INVISIBLE);
+                            }
+                            background.setTranslationY(recyclerPaddingTop - currentRecyclerScrollY);
+
                         }
                     }
                 }
@@ -322,6 +347,11 @@ public class TargetChooserActivity extends AppCompatActivity
                 );
         recyclerView.animate()
                 .translationY(rootView.getHeight())
+                .setDuration(animationDuration)
+                .setInterpolator(outInterpolator)
+                .setListener(null);
+        background.animate()
+                .translationY(background.getTranslationY() + rootView.getHeight())
                 .setDuration(animationDuration)
                 .setInterpolator(outInterpolator)
                 .setListener(null);

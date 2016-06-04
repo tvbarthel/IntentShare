@@ -1,5 +1,6 @@
 package fr.tvbarthel.intentshare;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -15,6 +16,7 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
      */
     private static final int VIEW_TYPE_HEADER = 0x00000001;
     private static final int VIEW_TYPE_RAW = 0x00000002;
+
     private final String label;
     private final IconLoader iconLoader;
 
@@ -62,15 +64,24 @@ class TargetActivityAdapter extends RecyclerView.Adapter<TargetActivityAdapter.V
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         );
+        Context context = parent.getContext();
         switch (viewType) {
             case VIEW_TYPE_HEADER:
                 TargetActivityHeaderView headerView
-                        = new TargetActivityHeaderView(parent.getContext());
+                        = new TargetActivityHeaderView(context);
                 headerView.setLayoutParams(layoutParams);
+                int extraPadding = context.getResources()
+                        .getDimensionPixelSize(R.dimen.isl_target_activity_header_extra_padding);
+                headerView.setPadding(
+                        headerView.getPaddingLeft() + extraPadding,
+                        headerView.getPaddingTop(),
+                        headerView.getRight() + extraPadding,
+                        headerView.getPaddingBottom()
+                );
                 return new ViewHolder(headerView);
             case VIEW_TYPE_RAW:
                 TargetActivityView targetActivityView
-                        = new TargetActivityView(parent.getContext(), iconLoader);
+                        = new TargetActivityView(context, iconLoader);
                 targetActivityView.setLayoutParams(layoutParams);
                 targetActivityView.setListener(internalTargetActivityViewListener);
                 return new ViewHolder(targetActivityView);

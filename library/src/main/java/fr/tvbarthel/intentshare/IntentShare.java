@@ -77,6 +77,11 @@ public final class IntentShare implements Parcelable {
     IconLoader iconLoader;
 
     /**
+     * Provide the comparator used to sort the target activities.
+     */
+    TargetActivityComparatorProvider comparatorProvider;
+
+    /**
      * Title that will be displayed in the chooser.
      */
     String chooserTitle;
@@ -99,6 +104,7 @@ public final class IntentShare implements Parcelable {
         packageWithExtraProvider = new ArrayList<>();
         this.listener = null;
         this.iconLoader = new AsyncIconLoader();
+        this.comparatorProvider = new TargetActivity.RecencyComparatorProvider();
         this.chooserTitle = context.getString(R.string.isl_default_sharing_label);
     }
 
@@ -115,6 +121,7 @@ public final class IntentShare implements Parcelable {
         this.mailSubject = in.readString();
         this.extraProviders = in.createTypedArrayList(ExtraProvider.CREATOR);
         this.iconLoader = in.readParcelable(IconLoader.class.getClassLoader());
+        this.comparatorProvider = in.readParcelable(TargetActivityComparatorProvider.class.getClassLoader());
         this.chooserTitle = in.readString();
     }
 
@@ -131,6 +138,7 @@ public final class IntentShare implements Parcelable {
         dest.writeString(this.mailSubject);
         dest.writeTypedList(this.extraProviders);
         dest.writeParcelable(this.iconLoader, flags);
+        dest.writeParcelable(this.comparatorProvider, flags);
         dest.writeString(this.chooserTitle);
     }
 
@@ -167,6 +175,26 @@ public final class IntentShare implements Parcelable {
      */
     public IntentShare iconLoader(@NonNull IconLoader iconLoader) {
         this.iconLoader = iconLoader;
+        return this;
+    }
+
+    /**
+     * Provide a custom {@link java.util.Comparator} in order to sort the {@link TargetActivity}
+     * displayed to the user.
+     * <p/>
+     * By default, TargetActivities are sorted by the recentness of their selection. If it's the
+     * behaviour that you are looking for, don't use this method and let the default comparator
+     * bring the magic.
+     *
+     * @param comparatorProvider comparator used to sort the TargetActivities displayed to the user.
+     *                           Will override the default sorting by recentness.
+     * @return current {@link IntentShare} for method chaining.
+     */
+    public IntentShare comparatorProvider(@NonNull TargetActivityComparatorProvider comparatorProvider) {
+        if (comparatorProvider == null) {
+            throw new NullPointerException("Custom comparator provider can't be null.");
+        }
+        this.comparatorProvider = comparatorProvider;
         return this;
     }
 

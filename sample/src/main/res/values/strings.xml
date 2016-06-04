@@ -3,6 +3,8 @@
     <string name="icon_loader_default">Default IconLoader</string>
     <string name="icon_loader_picasso">Picasso IconLoader</string>
     <string name="icon_loader_glide">Glide IconLoader</string>
+    <string name="sorting_default">Default Sorting (recency)</string>
+    <string name="sorting_custom">Custom Sorting (social first)</string>
 
     <string name="article_title">Improves the sharing experience on Android with IntentShare.</string>
     <string name="article_url">http://tvbarthel.github.io/IntentShare/</string>
@@ -32,4 +34,6 @@
     <string name="mail_subject_hint">Mail subject</string>
     <string name="mail_body_hint">Mail body</string>
     <string name="default_providers">Default provider</string>
+    <string name="sorting_menu">Target sorting</string>
+    <string name="loader_menu">Icon loading</string>
 </resources>

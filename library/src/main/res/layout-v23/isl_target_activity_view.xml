@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/target_activity_view_icon"
         android:layout_width="@dimen/isl_target_activity_view_icon_size"
         android:layout_height="@dimen/isl_target_activity_view_icon_size"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/isl_target_activity_icon_margin_left"/>
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginLeft="@dimen/isl_target_activity_icon_margin_left" />
 
     <TextView
         android:id="@+id/target_activity_view_label"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/isl_target_activity_view_label_icon_margin"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/isl_target_activity_view_label_icon_margin"
         android:ellipsize="end"
-        android:singleLine="true"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center"
+        android:maxLines="2"
         android:textColor="@color/isl_target_activity_view_label"
-        android:textSize="@dimen/isl_target_activity_view_text_size"/>
+        android:textSize="@dimen/isl_target_activity_view_text_size" />
 
 </merge>
