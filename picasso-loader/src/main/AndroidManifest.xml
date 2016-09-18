@@ -1,6 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fr.tvbarthel.intentshare.loader.picasso">
+<manifest package="fr.tvbarthel.intentshare.loader.picasso">
 
-    <application android:allowBackup="false" />
+    <application />
 
 </manifest>
