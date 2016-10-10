@@ -1,6 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fr.tvbarthel.intentshare.loader.glide">
+<manifest package="fr.tvbarthel.intentshare.loader.glide">
 
-    <application android:allowBackup="false" />
+    <application  />
 
 </manifest>

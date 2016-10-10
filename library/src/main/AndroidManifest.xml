@@ -1,9 +1,8 @@
 <manifest package="fr.tvbarthel.intentshare"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <application
-        android:allowBackup="false"
-        android:supportsRtl="true">
+    <application>
+
         <activity
             android:name=".TargetChooserActivity"
             android:theme="@style/IntentShareTheme" />
