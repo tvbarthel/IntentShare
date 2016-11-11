@@ -102,7 +102,7 @@ IntentShare.with(context)
     .chooserTitle("Select a sharing target : ")
     .text("Default text you would like to share.")
     .image(Uri.parse("content://com.example.test.fileprovider/data/img.png"))
-    .twitterBody("Tweet can only have 127 char!")
+    .twitterBody("Tweet can only have 140 char!")
     .deliver();
 ```
 

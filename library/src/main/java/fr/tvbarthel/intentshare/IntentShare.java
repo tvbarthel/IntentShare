@@ -297,16 +297,19 @@ public final class IntentShare implements Parcelable {
      * Text which will be used as tweet body if target application is the Twitter one.
      * <p/>
      * Override {@link IntentShare#text(String)} for the Twitter application.
+     * <p>
+     * Note that length compliancy (140 char) isn't handle by the library anymore since
+     * tweet lenght can't be easily deduced from the text length directly.
+     * <p>
+     * Please refer to the following link if you want to ensure the length check on your side:
+     * https://blog.twitter.com/2016/doing-more-with-140-characters
      *
      * @param tweet tweet body.
      * @return current {@link IntentShare} for method chaining.
      */
     @NonNull
     public IntentShare twitterBody(@NonNull String tweet) {
-        if (tweet.length() > 140) {
-            throw new IllegalArgumentException("Invalid tweet content : "
-                    + "exceed the 140-Character limit : " + tweet);
-        } else if (packageWithExtraProvider.contains(IntentShare.TWITTER)) {
+        if (packageWithExtraProvider.contains(IntentShare.TWITTER)) {
             throw new IllegalArgumentException("Twitter body can only be set once.");
         } else {
             packageWithExtraProvider.add(IntentShare.TWITTER);
