@@ -8,6 +8,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import static org.mockito.Mockito.mock;
 
@@ -15,26 +16,16 @@ import static org.mockito.Mockito.mock;
  * Test for {@link IntentShare}
  */
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class IntentShareTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testTweetLimitExceeded() throws Exception {
-        Context context = mock(Context.class);
-        String tweetLimitExceeded = "Tweet 140-character limit over exceeded with a "
-                + "very very very very very very very very very very very very very"
-                + "very very"
-                + "long text of 141 char";
-        Assert.assertEquals(141, tweetLimitExceeded.length());
-        IntentShare.with(context).twitterBody(tweetLimitExceeded);
-    }
 
     @Test
     public void testTweetLimitEquals() throws Exception {
         Context context = mock(Context.class);
         String tweetLimitExceeded = "Tweet 140-character limit over exceeded with a "
-                + "very very very very very very very very very very very very very"
-                + "very ver"
-                + "long text of 140 char";
+            + "very very very very very very very very very very very very very"
+            + "very ver"
+            + "long text of 140 char";
         Assert.assertEquals(140, tweetLimitExceeded.length());
         IntentShare.with(context).twitterBody(tweetLimitExceeded);
     }
