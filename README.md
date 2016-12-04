@@ -47,7 +47,7 @@ Find more about our motivations [here](http://tvbarthel.fr/IntentShare/).
 # Gradle dependency
 available on jcenter.
 ```groovy
-compile 'fr.tvbarthel.intentshare:library:0.0.3'
+compile 'fr.tvbarthel.intentshare:library:0.0.4'
 ```
 
 dependencies
@@ -215,7 +215,7 @@ Default icon loader used to load target activities icons is based on AsyncTask.
 ## Picasso
 If your are already using Picasso, you may want to consider using PicassoIconLoader:
 ```groovy
-compile 'fr.tvbarthel.intentshare:picasso-loader:0.0.3'
+compile 'fr.tvbarthel.intentshare:picasso-loader:0.0.4'
 ```
 
 ```java
@@ -229,7 +229,7 @@ IntentShare.with(context)
 ## Glide
 If your are already using Glide, you may want to consider using GlideIconLoader:
 ```groovy
-compile 'fr.tvbarthel.intentshare:glide-loader:0.0.3'
+compile 'fr.tvbarthel.intentshare:glide-loader:0.0.4'
 ```
 
 ```java
@@ -301,6 +301,7 @@ An example from the sample can be found here : [SocialTargetActivityComparatorPr
 
 # Release Note
 
+* 0.0.4: min sdk set to 14.
 * 0.0.3: Tweet length check no longer performed (see #39). `allowbackup` disable by default.
 
 # What's next
