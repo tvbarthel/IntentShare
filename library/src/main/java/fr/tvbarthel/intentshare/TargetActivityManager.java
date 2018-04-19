@@ -159,6 +159,11 @@ class TargetActivityManager {
             intent.putExtra(Intent.EXTRA_TEXT, intentShare.text);
             addImageExtras(intent, intentShare.imageUri);
         }
+        if ((intentShare.intentFlags != null) && !intentShare.intentFlags.isEmpty()) {
+            for (Integer intentFlag : intentShare.intentFlags){
+                intent.addFlags(intentFlag);
+            }
+        }
         applyExtraProvider(intent, packageName, intentShare.extraProviders);
         intent.setComponent(componentName);
         return intent;
