@@ -365,9 +365,10 @@ public final class IntentShare implements Parcelable {
      * Allow to add a specific intent flag
      * @param intentFlag Intent flag to be added to sharing medium's opening intent;
      */
-    public void addIntentFlag(Integer intentFlag) {
+    public IntentShare addIntentFlag(Integer intentFlag) {
 
         intentFlags.add(intentFlag);
+        return this;
     }
 
     /**
