@@ -27,8 +27,6 @@ import fr.tvbarthel.intentshare.IconLoader;
 import fr.tvbarthel.intentshare.IntentShare;
 import fr.tvbarthel.intentshare.IntentShareListener;
 import fr.tvbarthel.intentshare.TargetActivityComparatorProvider;
-import fr.tvbarthel.intentshare.loader.glide.GlideIconLoader;
-import fr.tvbarthel.intentshare.loader.picasso.PicassoIconLoader;
 
 public class MainActivity extends AppCompatActivity implements
         Adapter.Listener, View.OnClickListener, ExtraProviderDialogFragment.Callback {
@@ -48,10 +46,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private IntentShareListener intentShareListener;
 
-    private PicassoIconLoader picassoIconLoader;
     private IconLoader iconLoader;
     private TargetActivityComparatorProvider customComparatorProvider;
-    private GlideIconLoader glideIconLoader;
 
     private String targetPackage;
     private String dialogTitle;
@@ -110,18 +106,6 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.sample_icon_loader_default:
                 iconLoader = null;
-                break;
-            case R.id.sample_icon_loader_picasso:
-                if (picassoIconLoader == null) {
-                    picassoIconLoader = new PicassoIconLoader();
-                }
-                iconLoader = picassoIconLoader;
-                break;
-            case R.id.sample_icon_loader_glide:
-                if (glideIconLoader == null) {
-                    glideIconLoader = new GlideIconLoader();
-                }
-                iconLoader = picassoIconLoader;
                 break;
             case R.id.sorting_default:
                 customComparatorProvider = null;
