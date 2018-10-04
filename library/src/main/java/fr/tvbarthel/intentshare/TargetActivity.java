@@ -1,11 +1,8 @@
 package fr.tvbarthel.intentshare;
 
-import android.content.Context;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Parcel;
 
-import java.io.File;
 import java.util.Comparator;
 
 /**
@@ -14,7 +11,6 @@ import java.util.Comparator;
 public class TargetActivity {
 
     private final int activityLabelResId;
-    private final Uri iconUri;
     private final boolean isMail;
     private final long lastSelection;
     private ResolveInfo resolveInfo;
@@ -23,24 +19,12 @@ public class TargetActivity {
     /**
      * Plain java model for a sharing target activity.
      *
-     * @param context       context used to load target activity label.
-     * @param resolveInfo   {@link ResolveInfo} linked to the target activity.
+     * @param resolveInfo {@link ResolveInfo} linked to the target activity.
      * @param lastSelection time stamp in milli of  last selection.
      */
-    public TargetActivity(Context context, ResolveInfo resolveInfo, long lastSelection) {
+    public TargetActivity(ResolveInfo resolveInfo, long lastSelection) {
         this.lastSelection = lastSelection;
         this.resolveInfo = resolveInfo;
-
-        int icon = resolveInfo.activityInfo.icon;
-        if (icon == 0) {
-            icon = resolveInfo.activityInfo.applicationInfo.icon;
-        }
-        this.iconUri = Uri.parse(
-                "android.resource://"
-                        + resolveInfo.activityInfo.applicationInfo.packageName
-                        + File.separator
-                        + icon
-        );
 
         this.activityLabelResId = resolveInfo.labelRes;
         this.isMail = resolveInfo.filter.hasDataType("message/rfc822");
@@ -105,15 +89,6 @@ public class TargetActivity {
     }
 
     /**
-     * Retrieve the Uri used to access to the target application launcher icon.
-     *
-     * @return uri linking to the application launcher icon.
-     */
-    public Uri getIconUri() {
-        return iconUri;
-    }
-
-    /**
      * Used to know if the target activity is a mail client.
      * <p/>
      * Basically, any activity which can handle type 'message/rfc_822'.
@@ -175,6 +150,7 @@ public class TargetActivity {
          * Parcelable.
          */
         public static final Creator<RecencyComparatorProvider> CREATOR = new Creator<RecencyComparatorProvider>() {
+
             @Override
             public RecencyComparatorProvider createFromParcel(Parcel source) {
                 return new RecencyComparatorProvider(source);
@@ -211,7 +187,6 @@ public class TargetActivity {
         protected RecencyComparatorProvider(Parcel in) {
 
         }
-
 
         @Override
         public Comparator<TargetActivity> provideComparator() {

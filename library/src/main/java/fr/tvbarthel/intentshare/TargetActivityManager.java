@@ -89,7 +89,7 @@ class TargetActivityManager {
                 long lastSelection = sharedPreferences.getLong(lastSelectionKey, 0);
 
                 TargetActivity targetActivity
-                        = new TargetActivity(context, targetActivityInfo, lastSelection);
+                        = new TargetActivity(targetActivityInfo, lastSelection);
                 targetActivities.add(targetActivity);
             }
         }
