@@ -314,9 +314,7 @@
 
         <!-- Ensure a class has a package declaration. !-->
         <!-- See http://checkstyle.sf.net/config_coding.html !-->
-        <module name="PackageDeclaration">
-            <property name="ignoreDirectoryName" value="true" />
-        </module>
+        <module name="PackageDeclaration" />
 
     </module>
     <module name="TreeWalker">

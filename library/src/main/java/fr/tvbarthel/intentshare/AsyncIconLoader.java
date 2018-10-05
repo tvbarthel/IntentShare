@@ -1,23 +1,20 @@
 package fr.tvbarthel.intentshare;
 
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Parcel;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.ImageView;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Icon loader based on an {@link AsyncTask}.
  * <p/>
- * No cashing is performed for decoded {@link Bitmap}.
  */
 class AsyncIconLoader implements IconLoader {
 
@@ -37,12 +34,11 @@ class AsyncIconLoader implements IconLoader {
     };
 
     private SparseArray<AsyncIconLoaderTask> task;
-    private HashMap<Uri, Bitmap> cachedIcons;
+    private HashMap<String, Drawable> cachedIcons;
 
     /**
      * Icon loader based on an {@link AsyncTask}
      * <p/>
-     * No cashing is performed for decoded {@link Bitmap}.
      *
      * @param in parcel.
      */
@@ -53,7 +49,6 @@ class AsyncIconLoader implements IconLoader {
     /**
      * Icon loader based on an {@link AsyncTask}
      * <p/>
-     * No cashing is performed for decoded {@link Bitmap}.
      */
     public AsyncIconLoader() {
         task = new SparseArray<>();
@@ -67,16 +62,17 @@ class AsyncIconLoader implements IconLoader {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+
     }
 
     @Override
-    public void load(Uri iconUri, ImageView imageView) {
-        Bitmap bitmap = cachedIcons.get(iconUri);
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
+    public void load(ResolveInfo resolveInfo, ImageView imageView) {
+        Drawable drawable = cachedIcons.get(resolveInfo.activityInfo.packageName);
+        if (drawable != null) {
+            imageView.setImageDrawable(drawable);
         } else {
             AsyncIconLoaderTask asyncIconLoaderTask
-                    = new AsyncIconLoaderTask(iconUri, imageView, cachedIcons);
+                    = new AsyncIconLoaderTask(resolveInfo, imageView, cachedIcons);
             task.put(imageView.hashCode(), asyncIconLoaderTask);
             asyncIconLoaderTask.execute();
         }
@@ -95,105 +91,51 @@ class AsyncIconLoader implements IconLoader {
     /**
      * {@link AsyncTask} used to load an icon off the ui thread.
      */
-    private static final class AsyncIconLoaderTask extends AsyncTask<Void, Void, Bitmap> {
+    private static final class AsyncIconLoaderTask extends AsyncTask<Void, Void, Drawable> {
 
         private static final String TAG = AsyncIconLoaderTask.class.getSimpleName();
 
-        private final ImageView imageTarget;
+        private final WeakReference<ImageView> imageTarget;
         private final PackageManager packageManager;
-        private final String targetPackage;
-        private final HashMap<Uri, Bitmap> cachedIcons;
-        private final Uri uri;
-        private int iconResId;
-        private int targetSize;
+        private final HashMap<String, Drawable> cachedIcons;
+        private ResolveInfo resolveInfo;
 
         /**
          * {@link AsyncTask} used to load an icon off the ui thread.
          *
-         * @param uri         uri of the icon to load.
+         * @param resolveInfo the resolve info object of the correspoding resolved activity
          * @param imageView   image view in which the icon should be loaded.
          * @param cachedIcons list of bitmap to which the new decoded one will be added.
          */
-        public AsyncIconLoaderTask(Uri uri, ImageView imageView, HashMap<Uri, Bitmap> cachedIcons) {
+        public AsyncIconLoaderTask(ResolveInfo resolveInfo, ImageView imageView,
+                                   HashMap<String, Drawable> cachedIcons) {
             packageManager = imageView.getContext().getPackageManager();
-            this.uri = uri;
-            targetPackage = uri.getAuthority();
-            iconResId = 0;
+            this.resolveInfo = resolveInfo;
 
-            List<String> pathSegments = uri.getPathSegments();
-            if (pathSegments.size() != 1) {
-                Log.e(TAG, "Can't find the icon res id for : " + uri.toString());
-            } else {
-                try {
-                    iconResId = Integer.parseInt(pathSegments.get(0));
-                } catch (NumberFormatException e) {
-                    Log.e(TAG, "Can't parse the icon res id : " + pathSegments.get(0));
-                }
-            }
-
-            imageTarget = imageView;
-            targetSize = imageView.getContext().getResources()
-                    .getDimensionPixelSize(R.dimen.isl_target_activity_view_icon_size);
+            imageTarget = new WeakReference<>(imageView);
             this.cachedIcons = cachedIcons;
         }
 
         @Override
-        protected Bitmap doInBackground(Void... params) {
-            Resources resources;
-            try {
-                resources = packageManager.getResourcesForApplication(targetPackage);
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.e(TAG, "Wrong package name, can't access to the resources : " + targetPackage);
-                return null;
-            }
-
-            if (isCancelled()) {
-                return null;
-            }
-
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.inPreferredConfig = Bitmap.Config.RGB_565;
-            BitmapFactory.decodeResource(resources, iconResId, options);
-
-            if (isCancelled()) {
-                return null;
-            }
-
-            options.inSampleSize = calculateInSampleSize(options, targetSize, targetSize);
-            options.inJustDecodeBounds = false;
+        protected Drawable doInBackground(Void... params) {
 
             if (isCancelled()) {
                 return null;
             } else {
-                return BitmapFactory.decodeResource(resources, iconResId, options);
+                return resolveInfo.activityInfo.loadIcon(packageManager);
             }
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            if (bitmap != null) {
-                imageTarget.setImageBitmap(bitmap);
-                cachedIcons.put(uri, bitmap);
+        protected void onPostExecute(Drawable drawable) {
+            super.onPostExecute(drawable);
+            if (drawable != null) {
+                if (imageTarget.get() != null) {
+                    imageTarget.get().setImageDrawable(drawable);
+                }
+                cachedIcons.put(resolveInfo.activityInfo.packageName, drawable);
             } else {
-                Log.e(TAG, "Failed to load icon from uri : " + uri);
-            }
-        }
-
-        private int calculateInSampleSize(
-                BitmapFactory.Options options,
-                int reqWidth,
-                int reqHeight) {
-            final int height = options.outHeight;
-            final int width = options.outWidth;
-
-            if (reqWidth == 0 || reqHeight == 0) {
-                return 1;
-            } else {
-                int heightRatio = (int) Math.floor((float) height / (float) reqHeight);
-                int widthRatio = (int) Math.floor((float) width / (float) reqWidth);
-                return Math.min(heightRatio, widthRatio);
+                Log.e(TAG, "Failed to load icon from uri : " + resolveInfo.resolvePackageName);
             }
         }
     }
