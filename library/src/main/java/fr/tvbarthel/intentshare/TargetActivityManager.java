@@ -89,7 +89,7 @@ class TargetActivityManager {
                 long lastSelection = sharedPreferences.getLong(lastSelectionKey, 0);
 
                 TargetActivity targetActivity
-                        = new TargetActivity(context, targetActivityInfo, lastSelection);
+                        = new TargetActivity(targetActivityInfo, lastSelection);
                 targetActivities.add(targetActivity);
             }
         }
@@ -158,6 +158,11 @@ class TargetActivityManager {
         } else { // other target
             intent.putExtra(Intent.EXTRA_TEXT, intentShare.text);
             addImageExtras(intent, intentShare.imageUri);
+        }
+        if ((intentShare.intentFlags != null) && !intentShare.intentFlags.isEmpty()) {
+            for (Integer intentFlag : intentShare.intentFlags){
+                intent.addFlags(intentFlag);
+            }
         }
         applyExtraProvider(intent, packageName, intentShare.extraProviders);
         intent.setComponent(componentName);

@@ -93,7 +93,7 @@ class TargetActivityView extends FrameLayout {
      */
     public void loadIcon() {
         icon.setImageDrawable(null);
-        asyncIconLoader.load(model.getIconUri(), icon);
+        asyncIconLoader.load(model.getResolveInfo(), icon);
     }
 
     /**
@@ -126,8 +126,8 @@ class TargetActivityView extends FrameLayout {
                 )
         );
 
-        icon = ((ImageView) findViewById(R.id.target_activity_view_icon));
-        label = ((TextView) findViewById(R.id.target_activity_view_label));
+        icon = findViewById(R.id.target_activity_view_icon);
+        label = findViewById(R.id.target_activity_view_label);
 
         mInternalClickListener = new OnClickListener() {
             @Override

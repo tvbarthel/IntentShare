@@ -64,6 +64,12 @@ public final class IntentShare implements Parcelable {
     ArrayList<ExtraProvider> extraProviders;
 
     /**
+     * Add any valid Intent flag to Sharing medium's opening intent
+     * (i.e FLAG_ACTIVITY_NEW_TASK)
+     */
+    List<Integer> intentFlags;
+
+    /**
      * Keep a track on package with a specific
      * {@link fr.tvbarthel.intentshare.IntentShare.ExtraProvider} in order to warn the user when
      * two provider are added for the same package.
@@ -101,6 +107,7 @@ public final class IntentShare implements Parcelable {
     private IntentShare(Context context) {
         this.context = context;
         extraProviders = new ArrayList<>();
+        intentFlags = new ArrayList<>();
         packageWithExtraProvider = new ArrayList<>();
         this.listener = null;
         this.iconLoader = new AsyncIconLoader();
@@ -120,6 +127,8 @@ public final class IntentShare implements Parcelable {
         this.mailBody = in.readString();
         this.mailSubject = in.readString();
         this.extraProviders = in.createTypedArrayList(ExtraProvider.CREATOR);
+        this.intentFlags = new ArrayList<>();
+        in.readList(this.intentFlags, String.class.getClassLoader());
         this.iconLoader = in.readParcelable(IconLoader.class.getClassLoader());
         this.comparatorProvider = in.readParcelable(TargetActivityComparatorProvider.class.getClassLoader());
         this.chooserTitle = in.readString();
@@ -137,6 +146,7 @@ public final class IntentShare implements Parcelable {
         dest.writeString(this.mailBody);
         dest.writeString(this.mailSubject);
         dest.writeTypedList(this.extraProviders);
+        dest.writeList(intentFlags);
         dest.writeParcelable(this.iconLoader, flags);
         dest.writeParcelable(this.comparatorProvider, flags);
         dest.writeString(this.chooserTitle);
@@ -348,6 +358,16 @@ public final class IntentShare implements Parcelable {
                     + extraProvider.packageName);
         }
         extraProviders.add(extraProvider);
+        return this;
+    }
+
+    /**
+     * Allow to add a specific intent flag
+     * @param intentFlag Intent flag to be added to sharing medium's opening intent;
+     */
+    public IntentShare addIntentFlag(Integer intentFlag) {
+
+        intentFlags.add(intentFlag);
         return this;
     }
 
